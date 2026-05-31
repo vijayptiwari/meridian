@@ -3,10 +3,10 @@
   const LICENSE = REPO + "/blob/main/LICENSE";
 
   const NAV = [
-    { href: "index.html", label: "Home", id: "home" },
-    { href: "compare.html", label: "Why Meridian", id: "compare" },
+    { href: "index.html", label: "Overview", id: "home" },
+    { href: "compare.html", label: "Compare", id: "compare" },
     { href: "getting-started.html", label: "Get started", id: "getting-started" },
-    { href: "docs.html", label: "Docs", id: "docs" }
+    { href: "docs.html", label: "Documentation", id: "docs" }
   ];
 
   const DOC_LINKS = [
@@ -53,7 +53,7 @@
       '<a class="btn btn--ghost btn--sm" href="' +
       REPO +
       '" target="_blank" rel="noopener">GitHub</a>' +
-      '<a class="btn btn--primary btn--sm" href="getting-started.html">Install</a>' +
+      '<a class="btn btn--primary btn--sm" href="getting-started.html">Get started</a>' +
       '<button class="site-nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" data-nav-toggle>' +
       "<span></span><span></span><span></span></button>" +
       "</div></div></header>"
@@ -68,7 +68,7 @@
       '<a class="site-brand" href="index.html">' +
       '<img src="assets/brand/logo-mark.svg" width="28" height="28" alt="" />' +
       "<span>Meridian</span></a>" +
-      '<p class="site-footer__tagline">Align your next move. Open source, local-first career operations.</p>' +
+      '<p class="site-footer__tagline">Career operations platform. Open source, local-first, built for professionals.</p>' +
       "</div>" +
       '<div><h3 class="site-footer__heading">Product</h3><ul class="site-footer__links">' +
       '<li><a href="compare.html">Why Meridian</a></li>' +
@@ -124,7 +124,7 @@
       "</nav>" +
       '<div class="doc-sidebar__cta">' +
       "<p>Ready to run Meridian locally?</p>" +
-      '<a class="btn btn--primary btn--block" href="getting-started.html">Install guide</a>' +
+      '<a class="btn btn--primary btn--block" href="getting-started.html">Get started</a>' +
       "</div></aside>"
     );
   }
