@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portals — Meridian</title>
+    <meta name="description" content="LinkedIn and Naukri setup for Meridian local Playwright sessions." />
+    <link rel="icon" href="assets/brand/logo-mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/css/site.css" />
+  </head>
+  <body data-page="portals" data-doc-page="portals.html">
+    <div data-site-header></div>
+
+    <main>
+      <div class="site-shell doc-layout">
+        <div data-doc-sidebar></div>
+        <article class="doc-content">
+          <h1>Portals</h1>
+          <p class="lede">
+            Meridian uses local Playwright to search LinkedIn and Naukri. Sessions persist on disk so you only log in
+            once per portal.
+          </p>
+
+          <h2>First login</h2>
+          <ol>
+            <li>Enable <strong>Headed browser</strong> in the run panel</li>
+            <li>Start a search run from the dashboard or CLI</li>
+            <li>Log in manually when the browser window opens</li>
+            <li>Sessions are saved to <code>data/browser-state/</code></li>
+          </ol>
+
+          <h2>Enable or disable portals</h2>
+          <p>In <code>src/config.json</code>:</p>
+          <div class="code-block">
+            <button type="button" data-copy-code>Copy</button>
+            <pre><code>{
+  "portals": {
+    "linkedin": { "enabled": true },
+    "naukri": { "enabled": true }
+  }
+}</code></pre>
+          </div>
+
+          <h2>CLI flags</h2>
+          <div class="code-block">
+            <button type="button" data-copy-code>Copy</button>
+            <pre><code>JOB_AGENT_PORTAL=linkedin npm run search
+JOB_AGENT_HEADED=true npm run search</code></pre>
+          </div>
+
+          <h2>Assisted apply</h2>
+          <p>
+            Use <code>npm run assist-apply</code> for human-in-the-loop submissions. Meridian prepares forms and
+            content; you confirm before sending.
+          </p>
+
+          <div class="callout">
+            <strong>Important:</strong> Portal UIs change frequently — selectors may need maintenance in the open-source
+            adapters. Respect platform rate limits and terms of service.
+          </div>
+        </article>
+      </div>
+    </main>
+
+    <div data-site-footer></div>
+    <script src="assets/js/site.js"></script>
+  </body>
+</html>

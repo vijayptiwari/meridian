@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-labelledby="title desc">
+  <title>Meridian</title>
+  <desc>Meridian career alignment mark</desc>
+  <circle cx="24" cy="12" r="3" fill="#BFA56A"/>
+  <line x1="24" y1="16" x2="24" y2="40" stroke="#F4F7FA" stroke-width="2" stroke-linecap="round"/>
+</svg>

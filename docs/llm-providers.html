@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LLM providers — Meridian</title>
+    <meta name="description" content="Configure OpenAI, Ollama, Groq, webhooks, or keyword-only mode in Meridian." />
+    <link rel="icon" href="assets/brand/logo-mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/css/site.css" />
+  </head>
+  <body data-page="llm-providers" data-doc-page="llm-providers.html">
+    <div data-site-header></div>
+
+    <main>
+      <div class="site-shell doc-layout">
+        <div data-doc-sidebar></div>
+        <article class="doc-content">
+          <h1>LLM providers</h1>
+          <p class="lede">
+            Meridian routes all AI calls through a pluggable layer in <code>src/lib/llm/</code>. Choose a provider in
+            <code>config.llm.provider</code> or override via environment variables.
+          </p>
+
+          <h2>OpenAI-compatible (default)</h2>
+          <p>Works with OpenAI, Azure OpenAI, Groq, Together, and local Ollama.</p>
+          <div class="code-block">
+            <button type="button" data-copy-code>Copy</button>
+            <pre><code>{
+  "llm": {
+    "provider": "openai-compatible",
+    "baseUrl": "https://api.openai.com/v1",
+    "model": "gpt-4.1-mini",
+    "apiKey": null
+  }
+}</code></pre>
+          </div>
+          <p>Set <code>OPENAI_API_KEY</code> in <code>.env</code> instead of storing the key in config.</p>
+
+          <h3>Ollama example</h3>
+          <div class="code-block">
+            <button type="button" data-copy-code>Copy</button>
+            <pre><code>OPENAI_BASE_URL=http://localhost:11434/v1
+OPENAI_MODEL=llama3.1</code></pre>
+          </div>
+
+          <h2>Webhook</h2>
+          <p>POST JSON to your endpoint; expect JSON back within 60 seconds.</p>
+          <div class="code-block">
+            <button type="button" data-copy-code>Copy</button>
+            <pre><code>{
+  "llm": {
+    "provider": "webhook",
+    "webhookUrl": "http://localhost:8080/meridian-llm"
+  }
+}</code></pre>
+          </div>
+          <p>Request body shape:</p>
+          <div class="code-block">
+            <button type="button" data-copy-code>Copy</button>
+            <pre><code>{
+  "systemPrompt": "...",
+  "userPayload": { },
+  "schema": "json"
+}</code></pre>
+          </div>
+
+          <h2>Keyword-only</h2>
+          <p>No LLM calls — deterministic scoring and resume keyword tailoring. Zero API cost.</p>
+          <div class="code-block">
+            <button type="button" data-copy-code>Copy</button>
+            <pre><code>{
+  "llm": {
+    "provider": "keyword-only"
+  }
+}</code></pre>
+          </div>
+
+          <h2>Test connection</h2>
+          <p>Use <strong>Test LLM connection</strong> in Settings, or:</p>
+          <div class="code-block">
+            <button type="button" data-copy-code>Copy</button>
+            <pre><code>curl -X POST http://127.0.0.1:3030/api/llm/test</code></pre>
+          </div>
+        </article>
+      </div>
+    </main>
+
+    <div data-site-footer></div>
+    <script src="assets/js/site.js"></script>
+  </body>
+</html>

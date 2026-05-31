@@ -2,6 +2,8 @@
 
 **Align your next move.**
 
+**Website:** [vijayptiwari.github.io/JobApplier](https://vijayptiwari.github.io/JobApplier/) — product overview, docs, and why Meridian is different.
+
 Meridian is an open-source, local-first AI career agent. Search jobs, score fit, tailor resumes, and assist with applications on LinkedIn and Naukri. **Your data never leaves your machine.** No account. No login.
 
 ## Features
@@ -57,11 +59,13 @@ docker compose up --build
 
 ## Documentation
 
-- [Quickstart](docs/quickstart.md)
-- [Configuration](docs/configuration.md)
-- [LLM providers](docs/llm-providers.md)
-- [Portals](docs/portals.md)
-- [Gmail cleanup](docs/gmail-cleanup.md)
+- [Product site & docs hub](https://vijayptiwari.github.io/JobApplier/)
+- [Why Meridian is different](https://vijayptiwari.github.io/JobApplier/compare.html)
+- [Quickstart](https://vijayptiwari.github.io/JobApplier/getting-started.html) · [markdown](docs/quickstart.md)
+- [Configuration](https://vijayptiwari.github.io/JobApplier/configuration.html) · [markdown](docs/configuration.md)
+- [LLM providers](https://vijayptiwari.github.io/JobApplier/llm-providers.html) · [markdown](docs/llm-providers.md)
+- [Portals](https://vijayptiwari.github.io/JobApplier/portals.html) · [markdown](docs/portals.md)
+- [Gmail cleanup](https://vijayptiwari.github.io/JobApplier/gmail-cleanup.html) · [markdown](docs/gmail-cleanup.md)
 
 ## Disclaimer
 

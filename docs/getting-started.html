@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Get started — Meridian</title>
+    <meta name="description" content="Install and run Meridian locally in five minutes." />
+    <link rel="icon" href="assets/brand/logo-mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/css/site.css" />
+  </head>
+  <body data-page="getting-started" data-doc-page="getting-started.html">
+    <div data-site-header></div>
+
+    <main>
+      <div class="site-shell doc-layout">
+        <div data-doc-sidebar></div>
+        <article class="doc-content">
+          <h1>Quickstart</h1>
+          <p class="lede">
+            Meridian runs entirely on your machine. Clone the repository, copy the config templates, install
+            dependencies, and open the dashboard at <code>http://127.0.0.1:3030</code>.
+          </p>
+
+          <h2>Prerequisites</h2>
+          <ul>
+            <li>Node.js 20 or later</li>
+            <li>npm</li>
+            <li>Chromium via Playwright (installed below)</li>
+            <li>Optional: an OpenAI-compatible API key or local Ollama instance</li>
+          </ul>
+
+          <h2>1. Clone and configure</h2>
+          <div class="code-block">
+            <button type="button" data-copy-code>Copy</button>
+            <pre><code>git clone https://github.com/vijayptiwari/JobApplier.git
+cd JobApplier
+cp src/config.example.json src/config.json
+cp .env.example .env</code></pre>
+          </div>
+
+          <h2>2. Install dependencies</h2>
+          <div class="code-block">
+            <button type="button" data-copy-code>Copy</button>
+            <pre><code>npm install
+npx playwright install chromium
+npm run doctor</code></pre>
+          </div>
+          <p>
+            <code>npm run doctor</code> verifies Node version, config files, and module integrity. Fix any reported
+            issues before continuing.
+          </p>
+
+          <h2>3. Start the dashboard</h2>
+          <div class="code-block">
+            <button type="button" data-copy-code>Copy</button>
+            <pre><code>npm run ui</code></pre>
+          </div>
+          <p>Open <strong>http://127.0.0.1:3030</strong> in your browser. No login screen — the dashboard loads immediately.</p>
+
+          <h2>4. Set up your profile</h2>
+          <ol>
+            <li>Open <strong>Settings</strong> in the sidebar</li>
+            <li>Enter your name, skills, target titles, and search queries</li>
+            <li>Or upload a resume on the intake panel — Meridian extracts text locally</li>
+          </ol>
+
+          <h2>5. Configure LLM (optional)</h2>
+          <p>Add to <code>.env</code>:</p>
+          <div class="code-block">
+            <button type="button" data-copy-code>Copy</button>
+            <pre><code>OPENAI_API_KEY=sk-...</code></pre>
+          </div>
+          <p>For <strong>Ollama</strong> on localhost:</p>
+          <div class="code-block">
+            <button type="button" data-copy-code>Copy</button>
+            <pre><code>OPENAI_BASE_URL=http://localhost:11434/v1
+OPENAI_MODEL=llama3.1</code></pre>
+          </div>
+          <p>
+            Skip this step to use <strong>keyword-only mode</strong> — deterministic scoring with no API calls. See
+            <a href="llm-providers.html">LLM providers</a>.
+          </p>
+
+          <h2>6. Run your first pipeline</h2>
+          <ul>
+            <li><strong>Try Demo</strong> — generates sample jobs and shortlist output without portal access</li>
+            <li>
+              <strong>Run Jobs Dashboard</strong> — full pipeline; enable <strong>Headed browser</strong> on first run
+              to log into LinkedIn or Naukri manually
+            </li>
+          </ul>
+
+          <h2>CLI alternatives</h2>
+          <div class="code-block">
+            <button type="button" data-copy-code>Copy</button>
+            <pre><code>npm run search
+npm run assist-apply
+npm run demo</code></pre>
+          </div>
+          <p>Windows PowerShell:</p>
+          <div class="code-block">
+            <button type="button" data-copy-code>Copy</button>
+            <pre><code>.\run-agent.ps1 -Mode search -Headed</code></pre>
+          </div>
+          <p>macOS / Linux:</p>
+          <div class="code-block">
+            <button type="button" data-copy-code>Copy</button>
+            <pre><code>bash scripts/run-agent.sh both search</code></pre>
+          </div>
+
+          <h2>Outputs</h2>
+          <p>Results are saved under <code>data/output/</code>:</p>
+          <ul>
+            <li><code>jobs-*.json</code>, <code>shortlist-*.json</code>, <code>agent-report-*.json</code></li>
+            <li>Tailored resumes in <code>data/output/tailored-resumes/</code></li>
+            <li>CSV export from the dashboard for any run with a shortlist</li>
+          </ul>
+
+          <h2>Docker (optional)</h2>
+          <div class="code-block">
+            <button type="button" data-copy-code>Copy</button>
+            <pre><code>cp src/config.example.json src/config.json
+docker compose up --build</code></pre>
+          </div>
+
+          <div class="callout">
+            <strong>Disclaimer:</strong> Meridian is an assisted workflow tool. You are responsible for complying with
+            LinkedIn, Naukri, and employer terms of service. Review all generated resume content before submitting.
+          </div>
+
+          <p>
+            <a class="btn btn--primary" href="configuration.html">Next: Configuration</a>
+            <a class="btn btn--secondary" href="portals.html">Portal setup</a>
+          </p>
+        </article>
+      </div>
+    </main>
+
+    <div data-site-footer></div>
+    <script src="assets/js/site.js"></script>
+  </body>
+</html>

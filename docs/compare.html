@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Why Meridian — How we're different</title>
+    <meta
+      name="description"
+      content="Meridian vs job boards, auto-apply bots, and AI resume SaaS — local-first, open source, multi-agent, and privacy-preserving."
+    />
+    <link rel="icon" href="assets/brand/logo-mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/css/site.css" />
+  </head>
+  <body data-page="compare" data-doc-page="compare.html">
+    <div data-site-header></div>
+
+    <main>
+      <div class="site-shell doc-layout">
+        <div data-doc-sidebar></div>
+        <article class="doc-content">
+          <h1>Why Meridian is different</h1>
+          <p class="lede">
+            The job market is flooded with tools that optimize for engagement, subscriptions, or reckless automation.
+            Meridian optimizes for <strong>control</strong>, <strong>privacy</strong>, and
+            <strong>operator-grade workflows</strong> — on hardware you own.
+          </p>
+
+          <h2>The problem with most tools</h2>
+          <div class="split-grid">
+            <div class="panel-card">
+              <h3>Job boards &amp; aggregators</h3>
+              <ul>
+                <li>Show listings, not strategy</li>
+                <li>No resume tailoring or fit scoring</li>
+                <li>Your activity fuels their ad business</li>
+              </ul>
+            </div>
+            <div class="panel-card">
+              <h3>Auto-apply bots</h3>
+              <ul>
+                <li>Spray-and-pray applications damage your brand</li>
+                <li>Opaque automation risks ToS violations</li>
+                <li>No learning prep or career planning</li>
+              </ul>
+            </div>
+            <div class="panel-card">
+              <h3>AI resume SaaS</h3>
+              <ul>
+                <li>Upload your resume to someone else's cloud</li>
+                <li>Monthly fees for features you could run locally</li>
+                <li>Locked to one vendor's model and UI</li>
+              </ul>
+            </div>
+            <div class="panel-card">
+              <h3>Generic ChatGPT workflows</h3>
+              <ul>
+                <li>Manual copy-paste for every job</li>
+                <li>No portal integration or run history</li>
+                <li>No structured shortlist or export pipeline</li>
+              </ul>
+            </div>
+          </div>
+
+          <h2>Side-by-side comparison</h2>
+          <div class="comparison-table-wrap">
+            <table class="comparison-table">
+              <thead>
+                <tr>
+                  <th>Capability</th>
+                  <th class="highlight">Meridian</th>
+                  <th>Job boards</th>
+                  <th>Auto-apply tools</th>
+                  <th>AI resume SaaS</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Runs fully local</td>
+                  <td class="highlight"><span class="check">✓</span> Yes — no account</td>
+                  <td><span class="cross">✗</span> Cloud only</td>
+                  <td><span class="cross">✗</span> Usually cloud</td>
+                  <td><span class="cross">✗</span> Cloud only</td>
+                </tr>
+                <tr>
+                  <td>Open source (auditable)</td>
+                  <td class="highlight"><span class="check">✓</span> MIT license</td>
+                  <td><span class="cross">✗</span></td>
+                  <td><span class="cross">✗</span></td>
+                  <td><span class="cross">✗</span></td>
+                </tr>
+                <tr>
+                  <td>Multi-agent pipeline</td>
+                  <td class="highlight"><span class="check">✓</span> Research → apply prep</td>
+                  <td><span class="cross">✗</span> Listings only</td>
+                  <td>Partial</td>
+                  <td>Partial</td>
+                </tr>
+                <tr>
+                  <td>BYOK / Ollama / webhook LLM</td>
+                  <td class="highlight"><span class="check">✓</span> Your keys, your model</td>
+                  <td><span class="cross">✗</span></td>
+                  <td>Rare</td>
+                  <td>Vendor lock-in</td>
+                </tr>
+                <tr>
+                  <td>Works without paid LLM</td>
+                  <td class="highlight"><span class="check">✓</span> Keyword-only mode</td>
+                  <td><span class="check">✓</span></td>
+                  <td>Varies</td>
+                  <td><span class="cross">✗</span></td>
+                </tr>
+                <tr>
+                  <td>LinkedIn &amp; Naukri search</td>
+                  <td class="highlight"><span class="check">✓</span> Local Playwright</td>
+                  <td>Native</td>
+                  <td>Often yes</td>
+                  <td><span class="cross">✗</span></td>
+                </tr>
+                <tr>
+                  <td>Human-in-the-loop apply</td>
+                  <td class="highlight"><span class="check">✓</span> Assisted, not blind</td>
+                  <td>N/A</td>
+                  <td><span class="cross">✗</span> Often fully automated</td>
+                  <td><span class="cross">✗</span></td>
+                </tr>
+                <tr>
+                  <td>Career transition / upskilling</td>
+                  <td class="highlight"><span class="check">✓</span> Dedicated modes</td>
+                  <td><span class="cross">✗</span></td>
+                  <td><span class="cross">✗</span></td>
+                  <td>Limited</td>
+                </tr>
+                <tr>
+                  <td>Monthly subscription required</td>
+                  <td class="highlight"><span class="check">✓</span> $0 hosting</td>
+                  <td>Free tier ads</td>
+                  <td>Often paid</td>
+                  <td>Often paid</td>
+                </tr>
+                <tr>
+                  <td>Export shortlist / CSV / artifacts</td>
+                  <td class="highlight"><span class="check">✓</span> Local files + CSV</td>
+                  <td>Limited</td>
+                  <td>Varies</td>
+                  <td>Varies</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>Meridian's design principles</h2>
+          <ol>
+            <li>
+              <strong>Local-first by default</strong> — Browser sessions, resumes, run logs, and Gmail tokens live in
+              your project folder. The UI binds to <code>127.0.0.1</code> unless you explicitly change it.
+            </li>
+            <li>
+              <strong>Assisted, not reckless</strong> — Meridian helps you move faster; you review tailored resumes
+              and confirm applications. You remain accountable to platform terms of service.
+            </li>
+            <li>
+              <strong>Provider-neutral AI</strong> — Use OpenAI, Groq, Azure, Ollama on localhost, or your own
+              webhook. Switch providers in config without migrating your data.
+            </li>
+            <li>
+              <strong>Operator tooling</strong> — <code>npm run doctor</code>, demo mode, setup checklist, and
+              structured JSON outputs are built for repeatability — not one-off chat sessions.
+            </li>
+            <li>
+              <strong>Open source trust</strong> — Every agent, scorer, and portal adapter is in the repo. Fork it,
+              patch selectors when portals change, add your own agents.
+            </li>
+          </ol>
+
+          <div class="callout">
+            <strong>Bottom line:</strong> Meridian is not another job listing site or a spray-and-pray bot. It is a
+            local career operations stack for people who want power, privacy, and ownership.
+          </div>
+
+          <h2>Ready to try it?</h2>
+          <p>
+            <a class="btn btn--primary" href="getting-started.html">Install Meridian</a>
+            <a class="btn btn--secondary" href="index.html">Back to home</a>
+          </p>
+        </article>
+      </div>
+    </main>
+
+    <div data-site-footer></div>
+    <script src="assets/js/site.js"></script>
+  </body>
+</html>

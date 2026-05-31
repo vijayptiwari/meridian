@@ -2,6 +2,7 @@
   "name": "meridian",
   "version": "0.1.0",
   "description": "Open-source local-first AI career operations agent.",
+  "homepage": "https://vijayptiwari.github.io/JobApplier/",
   "license": "MIT",
   "type": "commonjs",
   "engines": {

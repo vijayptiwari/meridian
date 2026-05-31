@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meridian — Local-first AI career agent</title>
+    <meta
+      name="description"
+      content="Meridian is an open-source, local-first AI career agent. Search jobs, score fit, tailor resumes, and assist with applications — your data never leaves your machine."
+    />
+    <meta name="theme-color" content="#060B10" />
+    <meta property="og:title" content="Meridian — Align your next move" />
+    <meta
+      property="og:description"
+      content="Open-source career operations agent. No account. No cloud lock-in. Runs on your machine."
+    />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="assets/brand/logo-mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/css/site.css" />
+  </head>
+  <body data-page="home">
+    <div data-site-header></div>
+
+    <main>
+      <section class="hero">
+        <div class="site-shell hero__grid">
+          <div>
+            <span class="eyebrow">Open source · Local-first · MIT</span>
+            <h1>Align your next move — without sending your career to the cloud.</h1>
+            <p class="hero__lead">
+              Meridian is a multi-agent career operations system that runs on your machine. Research roles,
+              score fit, tailor resumes, plan upskilling, and assist with LinkedIn and Naukri applications —
+              with <strong>no SaaS account</strong> and <strong>no mandatory API bill</strong>.
+            </p>
+            <div class="hero__actions">
+              <a class="btn btn--primary" href="getting-started.html">Get started in 5 minutes</a>
+              <a class="btn btn--secondary" href="compare.html">Why Meridian is different</a>
+              <a
+                class="btn btn--ghost"
+                href="https://github.com/vijayptiwari/JobApplier"
+                target="_blank"
+                rel="noopener"
+                >View on GitHub</a
+              >
+            </div>
+            <div class="hero__stats">
+              <div class="stat-card">
+                <strong>$0</strong>
+                <span>Hosting cost — runs locally</span>
+              </div>
+              <div class="stat-card">
+                <strong>BYOK</strong>
+                <span>OpenAI, Ollama, Groq, webhook</span>
+              </div>
+              <div class="stat-card">
+                <strong>127.0.0.1</strong>
+                <span>Dashboard binds locally by default</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-panel">
+            <div class="hero-panel__header">
+              <div class="hero-panel__title">Agent pipeline</div>
+              <span class="status-pill">Local run</span>
+            </div>
+            <div class="pipeline">
+              <div class="pipeline-step">
+                <span class="pipeline-step__dot"></span>
+                <div><strong>Research</strong></div>
+                <span>LinkedIn · Naukri</span>
+              </div>
+              <div class="pipeline-step">
+                <span class="pipeline-step__dot"></span>
+                <div><strong>Salary &amp; business intel</strong></div>
+                <span>Comp filters</span>
+              </div>
+              <div class="pipeline-step">
+                <span class="pipeline-step__dot"></span>
+                <div><strong>Fit scoring</strong></div>
+                <span>JD comparison</span>
+              </div>
+              <div class="pipeline-step">
+                <span class="pipeline-step__dot"></span>
+                <div><strong>Resume tailoring</strong></div>
+                <span>Per-role drafts</span>
+              </div>
+              <div class="pipeline-step">
+                <span class="pipeline-step__dot"></span>
+                <div><strong>Learning prep</strong></div>
+                <span>Gap plans</span>
+              </div>
+              <div class="pipeline-step">
+                <span class="pipeline-step__dot"></span>
+                <div><strong>Assisted apply</strong></div>
+                <span>Human in the loop</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="trust-bar">
+        <div class="site-shell trust-bar__grid">
+          <div class="trust-item">
+            <span class="trust-item__icon">🔒</span>
+            <span>Resume, browser sessions, and run outputs stay on disk</span>
+          </div>
+          <div class="trust-item">
+            <span class="trust-item__icon">⚡</span>
+            <span>Keyword-only mode works without any LLM API key</span>
+          </div>
+          <div class="trust-item">
+            <span class="trust-item__icon">🧭</span>
+            <span>Career transition &amp; next-role planning modes</span>
+          </div>
+          <div class="trust-item">
+            <span class="trust-item__icon">🛠</span>
+            <span>MIT licensed — inspect, fork, and extend the agents</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="site-shell">
+          <div class="section__header">
+            <h2>Built for operators, not passive job boards</h2>
+            <p>
+              Most tools either dump listings, spam applications, or lock your profile in a paid cloud.
+              Meridian orchestrates a full career workflow on hardware you control.
+            </p>
+          </div>
+          <div class="feature-grid">
+            <article class="feature-card">
+              <div class="feature-card__icon">01</div>
+              <h3>Multi-agent pipeline</h3>
+              <p>
+                Specialized agents for research, compensation, fit analysis, resume modification, and interview
+                prep — not a single generic chat box.
+              </p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-card__icon">02</div>
+              <h3>Local web dashboard</h3>
+              <p>
+                Run <code>npm run ui</code> and manage searches, shortlists, exports, and settings from a premium
+                dashboard at <code>127.0.0.1:3030</code>.
+              </p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-card__icon">03</div>
+              <h3>Bring your own model</h3>
+              <p>
+                OpenAI-compatible APIs, local Ollama, Groq, Azure, or a custom webhook. Switch providers without
+                rewriting the product.
+              </p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-card__icon">04</div>
+              <h3>Assisted apply, not blind bots</h3>
+              <p>
+                Playwright runs in headed mode when you need it. You stay in control of submissions and platform
+                logins.
+              </p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-card__icon">05</div>
+              <h3>Upskilling &amp; transition modes</h3>
+              <p>
+                Plan your next role or pivot industries with dedicated agent workflows beyond basic job search.
+              </p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-card__icon">06</div>
+              <h3>Try before you connect portals</h3>
+              <p>
+                Demo mode generates sample output so you can explore the UI before linking LinkedIn or Naukri.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--tight">
+        <div class="site-shell split-grid">
+          <div class="panel-card">
+            <h3>Who Meridian is for</h3>
+            <ul>
+              <li>Engineers and operators running an active search on LinkedIn or Naukri</li>
+              <li>Privacy-conscious professionals who refuse to upload resumes to random SaaS tools</li>
+              <li>Power users who want Ollama or their own LLM stack</li>
+              <li>Contributors who want an open, hackable agent framework</li>
+            </ul>
+          </div>
+          <div class="panel-card">
+            <h3>What you get on day one</h3>
+            <ul>
+              <li>Shortlist scoring with configurable thresholds</li>
+              <li>Tailored resume drafts exported to <code>data/output/</code></li>
+              <li>CSV export from the dashboard</li>
+              <li>Setup checklist and <code>npm run doctor</code> health checks</li>
+              <li>Optional Gmail cleanup with local OAuth tokens</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="site-shell">
+          <div class="section__header">
+            <h2>How it works</h2>
+            <p>Three steps from clone to your first shortlist.</p>
+          </div>
+          <div class="feature-grid">
+            <article class="feature-card">
+              <div class="feature-card__icon">A</div>
+              <h3>Install locally</h3>
+              <p>Clone the repo, copy config templates, install Node dependencies and Playwright Chromium.</p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-card__icon">B</div>
+              <h3>Configure profile &amp; LLM</h3>
+              <p>Upload a resume or edit skills in Settings. Add an API key — or run keyword-only mode for free.</p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-card__icon">C</div>
+              <h3>Run the pipeline</h3>
+              <p>Start with Demo mode, then run a headed search to log into portals and build your shortlist.</p>
+            </article>
+          </div>
+          <p style="margin-top: 24px">
+            <a class="btn btn--primary" href="getting-started.html">Read the full quickstart</a>
+          </p>
+        </div>
+      </section>
+
+      <section class="section section--tight">
+        <div class="site-shell cta-band">
+          <h2>Your career data belongs on your machine.</h2>
+          <p>
+            Meridian is open source under MIT. No vendor lock-in, no subscription gate, no opaque black-box scoring.
+            Star the repo, run it locally, and shape the roadmap with issues and PRs.
+          </p>
+          <div class="hero__actions">
+            <a class="btn btn--primary" href="getting-started.html">Install Meridian</a>
+            <a class="btn btn--secondary" href="docs.html">Browse documentation</a>
+            <a
+              class="btn btn--ghost"
+              href="https://github.com/vijayptiwari/JobApplier"
+              target="_blank"
+              rel="noopener"
+              >Star on GitHub</a
+            >
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div data-site-footer></div>
+    <script src="assets/js/site.js"></script>
+  </body>
+</html>

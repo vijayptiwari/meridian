@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Configuration — Meridian</title>
+    <meta name="description" content="Configure Meridian profile, preferences, portals, and LLM settings." />
+    <link rel="icon" href="assets/brand/logo-mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/css/site.css" />
+  </head>
+  <body data-page="configuration" data-doc-page="configuration.html">
+    <div data-site-header></div>
+
+    <main>
+      <div class="site-shell doc-layout">
+        <div data-doc-sidebar></div>
+        <article class="doc-content">
+          <h1>Configuration</h1>
+          <p class="lede">
+            Meridian reads <code>src/config.json</code>. Copy from <code>src/config.example.json</code> on first
+            install. You can edit via the Settings panel in the UI or directly in the file.
+          </p>
+
+          <h2>Config sections</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Section</th>
+                <th>Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>profile</code></td>
+                <td>Name, skills, titles, resume summary</td>
+              </tr>
+              <tr>
+                <td><code>preferences</code></td>
+                <td>Search queries, score threshold, easy apply toggles</td>
+              </tr>
+              <tr>
+                <td><code>locationPolicy</code></td>
+                <td>Expected physical location for hybrid / WFO roles</td>
+              </tr>
+              <tr>
+                <td><code>salary</code></td>
+                <td>Compensation filters and research inputs</td>
+              </tr>
+              <tr>
+                <td><code>transition</code></td>
+                <td>Career transition mode inputs</td>
+              </tr>
+              <tr>
+                <td><code>gmail</code></td>
+                <td>Gmail cleanup settings and token directory</td>
+              </tr>
+              <tr>
+                <td><code>portals</code></td>
+                <td>Enable or disable LinkedIn and Naukri</td>
+              </tr>
+              <tr>
+                <td><code>llm</code></td>
+                <td>Provider, model, base URL, webhook URL</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2>Environment variables</h2>
+          <p>
+            See <code>.env.example</code> in the repository. Environment variables override config for LLM keys and
+            runtime flags such as:
+          </p>
+          <ul>
+            <li><code>JOB_AGENT_MODE</code> — search, assist-apply, demo, next-role, etc.</li>
+            <li><code>JOB_AGENT_HEADED</code> — launch visible browser for portal login</li>
+            <li><code>JOB_AGENT_PORTAL</code> — linkedin, naukri, or both</li>
+            <li><code>JOB_AGENT_UI_HOST</code> — dashboard bind address (default <code>127.0.0.1</code>)</li>
+            <li><code>OPENAI_API_KEY</code>, <code>OPENAI_BASE_URL</code>, <code>OPENAI_MODEL</code></li>
+          </ul>
+
+          <h2>Security</h2>
+          <ul>
+            <li>Never commit <code>src/config.json</code>, <code>.env</code>, or <code>credentials.json</code></li>
+            <li>The UI listens on <code>127.0.0.1</code> by default — do not expose it to the public internet without a reverse proxy and auth</li>
+            <li>Browser session state is stored in <code>data/browser-state/</code> — treat it like a password</li>
+          </ul>
+
+          <div class="callout">
+            Use the in-app <strong>Setup checklist</strong> to see which steps remain before your first full run.
+          </div>
+        </article>
+      </div>
+    </main>
+
+    <div data-site-footer></div>
+    <script src="assets/js/site.js"></script>
+  </body>
+</html>
