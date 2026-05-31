@@ -2,7 +2,7 @@
 
 **Align your next move.**
 
-**Website:** [vijayptiwari.github.io/JobApplier](https://vijayptiwari.github.io/JobApplier/) — product overview, docs, and why Meridian is different.
+**Website:** [vijayptiwari.github.io/meridian](https://vijayptiwari.github.io/meridian/) — product overview, docs, and why Meridian is different.
 
 Meridian is an open-source, local-first AI career agent. Search jobs, score fit, tailor resumes, and assist with applications on LinkedIn and Naukri. **Your data never leaves your machine.** No account. No login.
 
@@ -20,7 +20,7 @@ Meridian is an open-source, local-first AI career agent. Search jobs, score fit,
 
 ```bash
 git clone <repository-url>
-cd JobApplier
+cd meridian
 cp src/config.example.json src/config.json
 cp .env.example .env
 npm install
@@ -59,13 +59,13 @@ docker compose up --build
 
 ## Documentation
 
-- [Product site & docs hub](https://vijayptiwari.github.io/JobApplier/)
-- [Why Meridian is different](https://vijayptiwari.github.io/JobApplier/compare.html)
-- [Quickstart](https://vijayptiwari.github.io/JobApplier/getting-started.html) · [markdown](docs/quickstart.md)
-- [Configuration](https://vijayptiwari.github.io/JobApplier/configuration.html) · [markdown](docs/configuration.md)
-- [LLM providers](https://vijayptiwari.github.io/JobApplier/llm-providers.html) · [markdown](docs/llm-providers.md)
-- [Portals](https://vijayptiwari.github.io/JobApplier/portals.html) · [markdown](docs/portals.md)
-- [Gmail cleanup](https://vijayptiwari.github.io/JobApplier/gmail-cleanup.html) · [markdown](docs/gmail-cleanup.md)
+- [Product site & docs hub](https://vijayptiwari.github.io/meridian/)
+- [Why Meridian is different](https://vijayptiwari.github.io/meridian/compare.html)
+- [Quickstart](https://vijayptiwari.github.io/meridian/getting-started.html) · [markdown](docs/quickstart.md)
+- [Configuration](https://vijayptiwari.github.io/meridian/configuration.html) · [markdown](docs/configuration.md)
+- [LLM providers](https://vijayptiwari.github.io/meridian/llm-providers.html) · [markdown](docs/llm-providers.md)
+- [Portals](https://vijayptiwari.github.io/meridian/portals.html) · [markdown](docs/portals.md)
+- [Gmail cleanup](https://vijayptiwari.github.io/meridian/gmail-cleanup.html) · [markdown](docs/gmail-cleanup.md)
 
 ## Disclaimer
 

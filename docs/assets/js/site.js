@@ -1,5 +1,5 @@
 (function () {
-  const REPO = "https://github.com/vijayptiwari/JobApplier";
+  const REPO = "https://github.com/vijayptiwari/meridian";
   const LICENSE = REPO + "/blob/main/LICENSE";
 
   const NAV = [
