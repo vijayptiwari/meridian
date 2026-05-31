@@ -40,7 +40,8 @@
     const page = active || currentPage().replace(".html", "");
     return (
       '<header class="site-header" data-header>' +
-      '<div class="site-shell site-header__inner">' +
+      '<div class="site-shell site-shell--full">' +
+      '<div class="site-header__inner">' +
       '<a class="site-brand site-brand--lockup" href="index.html">' +
       '<img src="assets/brand/logo-full.svg" width="132" height="32" alt="Meridian" /></a>' +
       '<nav class="site-nav" aria-label="Primary">' +
@@ -55,14 +56,14 @@
       '<a class="btn btn--primary btn--sm" href="getting-started.html">Get started</a>' +
       '<button class="site-nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" data-nav-toggle>' +
       "<span></span><span></span><span></span></button>" +
-      "</div></div></header>"
+      "</div></div></div></header>"
     );
   }
 
   function renderFooter() {
     return (
       '<footer class="site-footer">' +
-      '<div class="site-shell site-footer__grid">' +
+      '<div class="site-shell site-shell--full site-footer__grid">' +
       '<div class="site-footer__brand">' +
       '<a class="site-brand site-brand--lockup" href="index.html">' +
       '<img src="assets/brand/logo-full.svg" width="120" height="28" alt="Meridian" /></a>' +
@@ -92,7 +93,7 @@
       '" target="_blank" rel="noopener">MIT License</a></li>' +
       "</ul></div>" +
       "</div>" +
-      '<div class="site-shell site-footer__bottom">' +
+      '<div class="site-shell site-shell--full site-footer__bottom">' +
       "<span>© " +
       new Date().getFullYear() +
       " Meridian contributors</span>" +
