@@ -1,0 +1,33 @@
+{
+  "name": "meridian",
+  "version": "0.1.0",
+  "description": "Open-source local-first AI career operations agent.",
+  "license": "MIT",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "ui": "node src/ui/server.js",
+    "search": "cross-env JOB_AGENT_MODE=search node src/index.js",
+    "assist-apply": "cross-env JOB_AGENT_MODE=assist-apply node src/index.js",
+    "next-role": "cross-env JOB_AGENT_MODE=next-role node src/index.js",
+    "career-transition": "cross-env JOB_AGENT_MODE=career-transition node src/index.js",
+    "gmail:preview": "cross-env JOB_AGENT_MODE=gmail-cleanup JOB_AGENT_GMAIL_ACTION=preview node src/index.js",
+    "gmail:trash": "cross-env JOB_AGENT_MODE=gmail-cleanup JOB_AGENT_GMAIL_ACTION=trash node src/index.js",
+    "gmail:delete": "cross-env JOB_AGENT_MODE=gmail-cleanup JOB_AGENT_GMAIL_ACTION=delete node src/index.js",
+    "demo": "cross-env JOB_AGENT_MODE=demo node src/index.js",
+    "doctor": "node scripts/doctor.js",
+    "postinstall": "node scripts/postinstall.js"
+  },
+  "dependencies": {
+    "@google-cloud/local-auth": "^3.0.1",
+    "cross-env": "^7.0.3",
+    "googleapis": "^150.0.1",
+    "docx": "^9.5.0",
+    "mammoth": "^1.9.0",
+    "pdf-parse": "^1.1.1",
+    "playwright": "^1.49.1"
+  }
+}

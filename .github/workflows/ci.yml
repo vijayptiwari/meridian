@@ -1,0 +1,19 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm install
+      - run: cp src/config.example.json src/config.json
+      - run: npm run doctor
+      - run: node -e "require('./src/lib/agent-stages'); require('./src/lib/pipelines'); require('./src/lib/llm'); console.log('modules ok')"

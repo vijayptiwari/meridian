@@ -1,0 +1,119 @@
+{
+  "profile": {
+    "name": "Your Name",
+    "experienceYears": 4,
+    "currentTitle": "Software Engineer",
+    "email": "you@example.com",
+    "phone": "+91-9999999999",
+    "linkedin": "https://www.linkedin.com/in/your-profile",
+    "github": "https://github.com/your-handle",
+    "skills": [
+      "Java",
+      "JavaScript",
+      "Python",
+      "Spring Boot",
+      "SQL",
+      "REST APIs",
+      "Microservices",
+      "AI Agent Development",
+      "Context Engineering",
+      "RAG Development",
+      "Prompt Engineering",
+      "LLM Application Development",
+      "System Architecture",
+      "Solution Architecture",
+      "Technical Leadership",
+      "Solutioning"
+    ],
+    "upskilledCategories": [],
+    "targetTitles": [
+      "Technical Lead",
+      "Solution Architect",
+      "Technical Architect",
+      "Lead Software Engineer",
+      "Principal Engineer",
+      "AI Engineer",
+      "LLM Engineer",
+      "Agent Engineer",
+      "RAG Engineer"
+    ],
+    "preferredLocations": [
+      "Remote",
+      "Bengaluru",
+      "Hyderabad",
+      "Pune"
+    ],
+    "avoidKeywords": [
+      "intern",
+      "unpaid",
+      "commission-only"
+    ],
+    "resumeSummary": "Software engineer interested in moving toward architecture, solutioning, technical leadership, and AI application roles, with hands-on backend, API, and platform experience."
+  },
+  "resume": {
+    "masterResumePath": "resume/master-resume.json",
+    "maxTailoredResumesPerRun": 10
+  },
+  "agentSystem": {
+    "maxCyclesPerAgent": 2
+  },
+  "locationPolicy": {
+    "expectedPhysicalLocation": "Pune, Maharashtra, India"
+  },
+  "salary": {
+    "currency": "INR",
+    "currentAnnualCompensation": null,
+    "minimumAnnualCompensation": null,
+    "targetAnnualCompensation": null
+  },
+  "transition": {
+    "currentDomain": "technology",
+    "targetDomain": "marketing and sales",
+    "targetRoles": [
+      "Sales Engineer",
+      "Solutions Consultant",
+      "Product Marketing Associate"
+    ],
+    "transitionLevel": "bridge",
+    "notes": "Focus on bridge roles that leverage technical depth while building customer-facing and go-to-market capability."
+  },
+  "gmail": {
+    "enabled": false,
+    "credentialsPath": "credentials.json",
+    "tokenDir": "data/gmail",
+    "query": "category:promotions OR label:^smartlabel_promo",
+    "batchSize": 100,
+    "maxMessagesPerRun": 500,
+    "previewSampleSize": 20,
+    "action": "preview"
+  },
+  "preferences": {
+    "minimumScore": 60,
+    "maxJobsPerPortal": 25,
+    "easyApplyOnly": true,
+    "searchQueries": [
+      "solution architect java microservices",
+      "technical architect backend platform",
+      "lead software engineer architecture",
+      "ai architect rag agents",
+      "llm architect ai applications"
+    ]
+  },
+  "portals": {
+    "linkedin": {
+      "enabled": true
+    },
+    "naukri": {
+      "enabled": true
+    }
+  },
+  "llm": {
+    "provider": "openai-compatible",
+    "baseUrl": "https://api.openai.com/v1",
+    "model": "gpt-4.1-mini",
+    "apiKey": null,
+    "webhookUrl": null,
+    "timeoutMs": 60000,
+    "headers": {}
+  }
+}

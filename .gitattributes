@@ -1,0 +1,31 @@
+# Normalize line endings in the repository
+* text=auto
+
+# Shell scripts: LF everywhere
+*.sh text eol=lf
+
+# Windows scripts: CRLF
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Source and config as text
+*.js text
+*.json text
+*.md text
+*.html text
+*.css text
+*.yml text
+*.yaml text
+*.svg text
+
+# Binary assets
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+*.pdf binary

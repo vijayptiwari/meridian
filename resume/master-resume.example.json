@@ -1,0 +1,66 @@
+{
+  "basics": {
+    "name": "Your Name",
+    "title": "Software Engineer",
+    "email": "you@example.com",
+    "phone": "+91-9999999999",
+    "location": "Bengaluru, India",
+    "linkedin": "https://www.linkedin.com/in/your-profile",
+    "github": "https://github.com/your-handle"
+  },
+  "summary": "Software engineer with experience building customer-facing web applications, backend APIs, and internal productivity tools. Strong in JavaScript, TypeScript, React, Node.js, SQL, and shipping measurable product improvements.",
+  "skills": [
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Node.js",
+    "Express",
+    "REST APIs",
+    "SQL",
+    "PostgreSQL",
+    "Git",
+    "Testing"
+  ],
+  "experience": [
+    {
+      "company": "Example Technologies",
+      "title": "Software Engineer",
+      "dates": "2022 - Present",
+      "location": "Bengaluru, India",
+      "bullets": [
+        "Built and shipped React and Node.js features used by 50,000+ monthly users.",
+        "Improved application performance by 35% through bundle optimization and API response tuning.",
+        "Collaborated with product and design to deliver customer-requested features with faster release cycles.",
+        "Wrote reusable UI components and backend integrations that reduced duplicate implementation effort across teams."
+      ]
+    },
+    {
+      "company": "Sample Systems",
+      "title": "Associate Software Engineer",
+      "dates": "2020 - 2022",
+      "location": "Hyderabad, India",
+      "bullets": [
+        "Developed internal dashboards and reporting tools using JavaScript, SQL, and REST APIs.",
+        "Automated repetitive operational tasks, reducing manual effort for support teams.",
+        "Fixed production issues and improved test coverage for critical business workflows."
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Analytics Dashboard",
+      "description": "Built a React dashboard with charting, filters, and API integrations for business stakeholders."
+    },
+    {
+      "name": "Workflow Automation Tool",
+      "description": "Created a Node.js automation utility to streamline repetitive business processes and notifications."
+    }
+  ],
+  "education": [
+    {
+      "institution": "Your University",
+      "degree": "B.Tech in Computer Science",
+      "dates": "2016 - 2020"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640">
+  <rect width="1280" height="640" fill="#060B10"/>
+  <circle cx="640" cy="220" r="10" fill="#BFA56A"/>
+  <line x1="640" y1="240" x2="640" y2="360" stroke="#F4F7FA" stroke-width="4" stroke-linecap="round"/>
+  <text x="640" y="430" fill="#F4F7FA" font-family="Plus Jakarta Sans, Segoe UI, sans-serif" font-size="64" font-weight="500" text-anchor="middle">Meridian</text>
+  <text x="640" y="490" fill="#8A9BAE" font-family="Plus Jakarta Sans, Segoe UI, sans-serif" font-size="28" text-anchor="middle">Align your next move.</text>
+  <text x="640" y="540" fill="#8A9BAE" font-family="Plus Jakarta Sans, Segoe UI, sans-serif" font-size="20" text-anchor="middle">Local-first open-source career agent</text>
+</svg>
