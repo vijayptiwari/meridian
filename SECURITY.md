@@ -14,7 +14,7 @@ Please report security issues privately via GitHub Security Advisories or email 
 
 - Meridian binds the dashboard to `127.0.0.1` by default.
 - API keys in `config.json` and `.env` are stored on your machine — protect those files.
-- Do not commit `src/config.json`, `.env`, or `credentials.json`.
+- Do not commit `src/config.json` or `.env`.
 
 ## Responsible use
 

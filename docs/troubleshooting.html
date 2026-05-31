@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Troubleshooting — Meridian</title>
+    <meta name="description" content="Fix common Meridian install, Playwright, portal, and LLM issues." />
+    <link rel="icon" href="assets/brand/logo-icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/css/site.css" />
+  </head>
+  <body data-page="troubleshooting" data-doc-page="troubleshooting.html">
+    <div data-site-header></div>
+    <main class="doc-page">
+      <div class="doc-frame">
+        <div data-doc-sidebar></div>
+        <article class="doc-content content-wide">
+          <h1>Troubleshooting</h1>
+          <input id="troubleshootingSearch" class="docs-search" type="search" placeholder="Search troubleshooting topics..." />
+          <div id="troubleshootingTopics">
+            <section data-topic="playwright install doctor">
+              <h2>Playwright / install</h2>
+              <p>Run <code>npm run init</code> or <code>npx playwright install chromium</code>, then <code>npm run doctor</code>.</p>
+            </section>
+            <section data-topic="linkedin naukri login headed portal selectors">
+              <h2>Portal login</h2>
+              <p>Enable <strong>Headed browser</strong> in the dashboard, run search, and complete login manually. Use <strong>Check portal selectors</strong> in run history or <code>npm run doctor -- --portals</code>.</p>
+            </section>
+            <section data-topic="llm openai ollama webhook api key">
+              <h2>LLM failures</h2>
+              <p>Test connection in Settings. Try keyword-only mode or the Ollama preset (<code>http://127.0.0.1:11434/v1</code>).</p>
+            </section>
+            <section data-topic="config resume upload settings get started">
+              <h2>Config / resume</h2>
+              <p>
+                Copy <code>src/config.example.json</code> to <code>src/config.json</code>. Upload a resume in the
+                <strong>Get started</strong> section at the top of the dashboard, or edit profile in
+                <strong>Settings</strong> (Profile · Search &amp; run · LLM).
+              </p>
+            </section>
+            <section data-topic="run interrupted resume replay checkpoint server restart">
+              <h2>Interrupted runs / resume</h2>
+              <p>
+                If the UI server restarts while a run was in progress, Meridian marks it <strong>interrupted</strong> when a checkpoint exists. Open the
+                <strong>Runs</strong> tab and click <strong>Resume from checkpoint</strong>, or use the banner on the dashboard. To re-run with the same settings after success or failure, use <strong>Replay run</strong>.
+              </p>
+              <p>
+                Page refresh alone does not stop the worker — the UI reconnects automatically. Checkpoints live in
+                <code>data/ui/checkpoints/</code>.
+              </p>
+            </section>
+            <section data-topic="port 3030 eaddrinuse ui server">
+              <h2>Dashboard won't start (port in use)</h2>
+              <p>
+                Another <code>npm run ui</code> process may still be bound to port 3030. Stop it or set
+                <code>JOB_AGENT_UI_PORT</code> in the environment. On Windows, find the process with
+                <code>Get-NetTCPConnection -LocalPort 3030</code>.
+              </p>
+            </section>
+          </div>
+        </article>
+      </div>
+    </main>
+    <div data-site-footer></div>
+    <script src="assets/js/site.js"></script>
+    <script>
+      (function () {
+        var input = document.getElementById("troubleshootingSearch");
+        var topics = document.querySelectorAll("#troubleshootingTopics section");
+        if (!input) return;
+        input.addEventListener("input", function () {
+          var q = input.value.trim().toLowerCase();
+          topics.forEach(function (section) {
+            var text = section.textContent.toLowerCase() + " " + (section.dataset.topic || "");
+            section.style.display = !q || text.includes(q) ? "" : "none";
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

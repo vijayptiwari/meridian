@@ -19,8 +19,9 @@
           <h1>Configuration</h1>
           <p class="lede">
             Meridian reads <code>src/config.json</code>. Copy from <code>src/config.example.json</code> on first
-            install. You can edit via the Settings panel in the UI or directly in the file.
+            install. You can edit via the <strong>Settings</strong> panel (Profile · Search &amp; run · LLM) or directly in the file.
           </p>
+          <p>See also: <a href="dashboard.html">Dashboard guide</a>.</p>
 
           <h2>Config sections</h2>
           <table>
@@ -52,10 +53,6 @@
                 <td>Career transition mode inputs</td>
               </tr>
               <tr>
-                <td><code>gmail</code></td>
-                <td>Gmail cleanup settings and token directory</td>
-              </tr>
-              <tr>
                 <td><code>portals</code></td>
                 <td>Enable or disable LinkedIn and Naukri</td>
               </tr>
@@ -75,13 +72,31 @@
             <li><code>JOB_AGENT_MODE</code> — search, assist-apply, demo, next-role, etc.</li>
             <li><code>JOB_AGENT_HEADED</code> — launch visible browser for portal login</li>
             <li><code>JOB_AGENT_PORTAL</code> — linkedin, naukri, or both</li>
+            <li><code>JOB_AGENT_RUN_ID</code> — artifact suffix for a run (UI-managed)</li>
+            <li><code>JOB_AGENT_RESUME_RUN_ID</code> — resume pipeline from checkpoint (UI-managed)</li>
             <li><code>JOB_AGENT_UI_HOST</code> — dashboard bind address (default <code>127.0.0.1</code>)</li>
+            <li><code>JOB_AGENT_UI_PORT</code> — dashboard port (default <code>3030</code>)</li>
             <li><code>OPENAI_API_KEY</code>, <code>OPENAI_BASE_URL</code>, <code>OPENAI_MODEL</code></li>
           </ul>
 
+          <h2>Documentation ↔ dashboard</h2>
+          <p>
+            The product docs on
+            <a href="https://vijayptiwari.github.io/meridian/" target="_blank" rel="noopener">vijayptiwari.github.io/meridian</a>
+            link back to your self-hosted workspace. After <code>npm run ui</code>, open
+            <a data-dashboard-open href="http://127.0.0.1:3030" target="_blank" rel="noopener noreferrer"
+              ><code data-dashboard-url-inline>http://127.0.0.1:3030</code></a
+            >.
+          </p>
+          <p>
+            If you bind Meridian to another host or port, visit any docs page once with
+            <code>?dashboard=https://your-host:3030</code>. The docs site remembers that URL in your browser for
+            header, footer, and sidebar dashboard links.
+          </p>
+
           <h2>Security</h2>
           <ul>
-            <li>Never commit <code>src/config.json</code>, <code>.env</code>, or <code>credentials.json</code></li>
+            <li>Never commit <code>src/config.json</code> or <code>.env</code></li>
             <li>The UI listens on <code>127.0.0.1</code> by default — do not expose it to the public internet without a reverse proxy and auth</li>
             <li>Browser session state is stored in <code>data/browser-state/</code> — treat it like a password</li>
           </ul>

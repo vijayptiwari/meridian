@@ -9,9 +9,13 @@ const state = {
   lastHandledCompletionKey: "",
   resumeIntake: null,
   dashboard: "jobs",
+  workspaceTab: {
+    jobs: "overview",
+    upskilling: "overview",
+    transition: "overview"
+  },
   workspacePanelOpen: false,
   upskilledCategories: [],
-  gmailResults: null,
   labelStacks: {
     resumeSummary: [],
     skills: [],
@@ -23,7 +27,10 @@ const state = {
     skills: [],
     targetTitles: [],
     searchQueries: []
-  }
+  },
+  tracker: { jobs: {} },
+  setupStatus: null,
+  pendingPortalRun: false
 };
 
 const STACK_FIELDS = {
@@ -339,14 +346,6 @@ function populateForm(config) {
   setFormValue("transitionRoles", (config.transition?.targetRoles || []).join(", "));
   setFormValue("transitionLevel", config.transition?.transitionLevel || "bridge");
   setFormValue("transitionNotes", config.transition?.notes || "");
-  setFormValue("gmailEnabled", config.gmail?.enabled);
-  setFormValue("gmailCredentialsPath", config.gmail?.credentialsPath || "credentials.json");
-  setFormValue("gmailTokenDir", config.gmail?.tokenDir || "data/gmail");
-  setFormValue("gmailQuery", config.gmail?.query || "category:promotions OR label:^smartlabel_promo");
-  setFormValue("gmailBatchSize", config.gmail?.batchSize || 100);
-  setFormValue("gmailMaxMessagesPerRun", config.gmail?.maxMessagesPerRun || 500);
-  setFormValue("gmailPreviewSampleSize", config.gmail?.previewSampleSize || 20);
-  setFormValue("gmailAction", config.gmail?.action || "preview");
   setFormValue("llmProvider", config.llm?.provider || "openai-compatible");
   setFormValue("llmModel", config.llm?.model || "gpt-4.1-mini");
   setFormValue("llmBaseUrl", config.llm?.baseUrl || "https://api.openai.com/v1");
@@ -389,15 +388,6 @@ function readFormIntoConfig() {
   next.transition.targetRoles = parseCsv(byId("transitionRoles").value);
   next.transition.transitionLevel = byId("transitionLevel").value.trim() || "bridge";
   next.transition.notes = byId("transitionNotes").value.trim();
-  next.gmail = next.gmail || {};
-  next.gmail.enabled = byId("gmailEnabled").checked;
-  next.gmail.credentialsPath = byId("gmailCredentialsPath").value.trim() || "credentials.json";
-  next.gmail.tokenDir = byId("gmailTokenDir").value.trim() || "data/gmail";
-  next.gmail.query = byId("gmailQuery").value.trim() || "category:promotions OR label:^smartlabel_promo";
-  next.gmail.batchSize = Number(byId("gmailBatchSize").value || 100);
-  next.gmail.maxMessagesPerRun = Number(byId("gmailMaxMessagesPerRun").value || 500);
-  next.gmail.previewSampleSize = Number(byId("gmailPreviewSampleSize").value || 20);
-  next.gmail.action = byId("gmailAction").value || "preview";
   next.llm = next.llm || {};
   next.llm.provider = byId("llmProvider").value || "openai-compatible";
   next.llm.model = byId("llmModel").value.trim() || "gpt-4.1-mini";
@@ -463,8 +453,56 @@ function formatDateTime(value) {
   });
 }
 
+function formatApplyReports(reports) {
+  if (!Array.isArray(reports) || !reports.length) {
+    return "0";
+  }
+
+  return reports
+    .map((report) => {
+      const label = formatAgentName(report?.agent) || humanizeKey(report?.agent) || "Apply";
+      const status = report?.status ? humanizeKey(String(report.status)) : "";
+      return status ? `${label} (${status})` : label;
+    })
+    .join(" · ");
+}
+
 function formatSummaryValue(value) {
-  if (value == null || value === "") return "-";
+  if (value == null || value === "") {
+    return "-";
+  }
+
+  if (Array.isArray(value)) {
+    if (!value.length) {
+      return "0";
+    }
+
+    if (value.every((item) => item == null || typeof item !== "object")) {
+      return value.map((item) => String(item)).join(", ");
+    }
+
+    if (value.every((item) => item && typeof item === "object" && ("agent" in item || "status" in item))) {
+      return formatApplyReports(value);
+    }
+
+    return value
+      .map((item) => (typeof item === "object" ? JSON.stringify(item) : String(item)))
+      .join(", ");
+  }
+
+  if (typeof value === "object") {
+    if ("agent" in value || "status" in value) {
+      return formatApplyReports([value]);
+    }
+
+    const entries = Object.entries(value).filter(([, entryValue]) => entryValue != null && entryValue !== "");
+    if (!entries.length) {
+      return "-";
+    }
+
+    return entries.map(([key, entryValue]) => `${humanizeKey(key)}: ${formatSummaryValue(entryValue)}`).join(" · ");
+  }
+
   return String(value);
 }
 
@@ -536,10 +574,6 @@ function isTransitionRun(run) {
   return run?.mode === "career-transition";
 }
 
-function isGmailRun(run) {
-  return run?.mode === "gmail-cleanup";
-}
-
 function runSupportsUpskilling(run) {
   return (
     isUpskillingRun(run) ||
@@ -553,10 +587,6 @@ function runSupportsTransition(run) {
 }
 
 function runMatchesDashboard(run, dashboard = state.dashboard) {
-  if (dashboard === "gmail") {
-    return isGmailRun(run);
-  }
-
   if (dashboard === "upskilling") {
     return runSupportsUpskilling(run);
   }
@@ -565,7 +595,7 @@ function runMatchesDashboard(run, dashboard = state.dashboard) {
     return runSupportsTransition(run);
   }
 
-  return !isUpskillingRun(run) && !isTransitionRun(run) && !isGmailRun(run);
+  return !isUpskillingRun(run) && !isTransitionRun(run);
 }
 
 function getSelectedRunEntryForDashboard() {
@@ -619,15 +649,6 @@ function buildSetupSummaryPills() {
     ].filter(([, value]) => value && value !== "Current -> Target");
   }
 
-  if (state.dashboard === "gmail") {
-    return [
-      ["Action", humanizeKey(byId("gmailAction")?.value || "preview")],
-      ["Query", byId("gmailQuery")?.value?.trim() ? "Configured" : ""],
-      ["Batch Size", byId("gmailBatchSize")?.value || ""],
-      ["Message Cap", byId("gmailMaxMessagesPerRun")?.value || ""]
-    ].filter(([, value]) => value);
-  }
-
   if (state.dashboard === "upskilling") {
     return [
       ["Skills", state.labelStacks.skills?.length || ""],
@@ -648,7 +669,7 @@ function renderSetupSummary() {
 
   const pills = buildSetupSummaryPills();
   if (!pills.length) {
-    container.innerHTML = `<p class="empty-state">Current run filters will appear here after config loads.</p>`;
+    container.innerHTML = `<p class="empty-state">Open Settings to set portals, salary guardrails, and run mode before starting.</p>`;
     return;
   }
 
@@ -698,12 +719,7 @@ function setWorkspacePanelOpen(nextOpen, options = {}) {
   document.body.classList.toggle("workspace-panel-open", state.workspacePanelOpen);
 
   const panel = byId("workspaceSection");
-  const openButtons = [
-    byId("openWorkspacePanelBtn"),
-    byId("openWorkspacePanelInlineBtn"),
-    byId("openWorkspaceNavBtn"),
-    byId("openGmailSetupBtn")
-  ].filter(Boolean);
+  const openButtons = [byId("openWorkspacePanelBtn"), byId("openWorkspacePanelInlineBtn")].filter(Boolean);
 
   if (panel) {
     panel.setAttribute("aria-hidden", state.workspacePanelOpen ? "false" : "true");
@@ -724,7 +740,7 @@ function historyForDashboard() {
   const history = [...(state.history || [])];
   let filtered = history.filter((item) => runMatchesDashboard(item, state.dashboard));
 
-  if (state.dashboard === "upskilling" || state.dashboard === "transition" || state.dashboard === "gmail") {
+  if (state.dashboard === "upskilling" || state.dashboard === "transition") {
     filtered.sort((a, b) => String(b.startedAt).localeCompare(String(a.startedAt)));
   }
 
@@ -748,12 +764,7 @@ function getRunModeForDashboard() {
     return "career-transition";
   }
 
-  if (state.dashboard === "gmail") {
-    modeSelect.value = "gmail-cleanup";
-    return "gmail-cleanup";
-  }
-
-  if (modeSelect.value === "next-role" || modeSelect.value === "career-transition" || modeSelect.value === "gmail-cleanup") {
+  if (modeSelect.value === "next-role" || modeSelect.value === "career-transition") {
     modeSelect.value = "search";
   }
 
@@ -768,9 +779,6 @@ function dashboardFromHash(hash = window.location.hash) {
   if (normalized === "#transition") {
     return "transition";
   }
-  if (normalized === "#gmail") {
-    return "gmail";
-  }
   return "jobs";
 }
 
@@ -780,9 +788,7 @@ function syncDashboardHash() {
       ? "#upskilling"
       : state.dashboard === "transition"
         ? "#transition"
-        : state.dashboard === "gmail"
-          ? "#gmail"
-          : "#jobs";
+        : "#jobs";
   if (window.location.hash !== nextHash) {
     window.history.replaceState(null, "", nextHash);
   }
@@ -792,72 +798,67 @@ function syncDashboardUi() {
   const jobsActive = state.dashboard === "jobs";
   const upskillingActive = state.dashboard === "upskilling";
   const transitionActive = state.dashboard === "transition";
-  const gmailActive = state.dashboard === "gmail";
   document.body.dataset.dashboard = state.dashboard;
 
   byId("jobsDashboardBtn").classList.toggle("active", jobsActive);
   byId("upskillDashboardBtn").classList.toggle("active", upskillingActive);
   byId("transitionDashboardBtn").classList.toggle("active", transitionActive);
-  byId("gmailDashboardBtn").classList.toggle("active", gmailActive);
   if (jobsActive) {
     byId("jobsDashboardBtn").setAttribute("aria-current", "page");
     byId("upskillDashboardBtn").removeAttribute("aria-current");
     byId("transitionDashboardBtn").removeAttribute("aria-current");
-    byId("gmailDashboardBtn").removeAttribute("aria-current");
   } else if (upskillingActive) {
     byId("upskillDashboardBtn").setAttribute("aria-current", "page");
     byId("jobsDashboardBtn").removeAttribute("aria-current");
     byId("transitionDashboardBtn").removeAttribute("aria-current");
-    byId("gmailDashboardBtn").removeAttribute("aria-current");
-  } else if (transitionActive) {
+  } else {
     byId("transitionDashboardBtn").setAttribute("aria-current", "page");
     byId("jobsDashboardBtn").removeAttribute("aria-current");
     byId("upskillDashboardBtn").removeAttribute("aria-current");
-    byId("gmailDashboardBtn").removeAttribute("aria-current");
-  } else {
-    byId("gmailDashboardBtn").setAttribute("aria-current", "page");
-    byId("jobsDashboardBtn").removeAttribute("aria-current");
-    byId("upskillDashboardBtn").removeAttribute("aria-current");
-    byId("transitionDashboardBtn").removeAttribute("aria-current");
   }
   byId("jobsDashboardGroup").hidden = !jobsActive;
   byId("upskillingDashboardGroup").hidden = !upskillingActive;
   byId("transitionDashboardGroup").hidden = !transitionActive;
-  byId("gmailDashboardGroup").hidden = !gmailActive;
+
+  const runIntentCopy = byId("runIntentCopy");
+  const runSearchBtn = byId("runSearchBtn");
 
   if (jobsActive) {
-    byId("dashboardTitle").textContent = "Eligible Jobs Dashboard";
-    byId("dashboardDescription").textContent = "View eligible openings, shortlist stronger bets, and inspect the job market without losing the shared pipeline and run history.";
-    byId("historyTitle").textContent = "Eligible Job Runs";
-    byId("selectedRunHeading").textContent = "Selected Job Run";
-    byId("runSearchBtn").textContent = "Run Jobs Dashboard";
+    byId("dashboardTitle").textContent = "Find jobs";
+    byId("dashboardDescription").textContent = "Live run progress and job outputs appear here after you start a search.";
+    byId("historyTitle").textContent = "Job search runs";
+    byId("selectedRunHeading").textContent = "Selected run";
+    runSearchBtn.textContent = "Start job search";
+    if (runIntentCopy) {
+      runIntentCopy.textContent = "Search eligible roles on LinkedIn and Naukri, score fit, and tailor resumes.";
+    }
   } else if (upskillingActive) {
-    byId("dashboardTitle").textContent = "Upskilling Dashboard";
-    byId("dashboardDescription").textContent = "Switch into upskilling mode to inspect skill gaps, learning paths, recommended courses, and role-readiness guidance.";
-    byId("historyTitle").textContent = "Upskilling Runs";
-    byId("selectedRunHeading").textContent = "Selected Upskilling Run";
-    byId("runSearchBtn").textContent = "Run Upskilling Dashboard";
-  } else if (transitionActive) {
-    byId("dashboardTitle").textContent = "Career Transition Dashboard";
-    byId("dashboardDescription").textContent = "Plan a non-native career move using bridge roles, transferable strengths, missing foundations, learning paths, and transition-safe opportunities.";
-    byId("historyTitle").textContent = "Career Transition Runs";
-    byId("selectedRunHeading").textContent = "Selected Transition Run";
-    byId("runSearchBtn").textContent = "Run Transition Dashboard";
+    byId("dashboardTitle").textContent = "Upskilling analysis";
+    byId("dashboardDescription").textContent = "Skill gaps, learning paths, and readiness metrics appear here after you run upskilling.";
+    byId("historyTitle").textContent = "Upskilling runs";
+    byId("selectedRunHeading").textContent = "Selected run";
+    runSearchBtn.textContent = "Start upskilling analysis";
+    if (runIntentCopy) {
+      runIntentCopy.textContent = "Analyze skill gaps and build a learning plan for your next role.";
+    }
   } else {
-    byId("dashboardTitle").textContent = "Gmail Cleanup Dashboard";
-    byId("dashboardDescription").textContent = "Preview promotional mail, then move it to trash or permanently delete it with a clear review step and saved cleanup reports.";
-    byId("historyTitle").textContent = "Gmail Cleanup Runs";
-    byId("selectedRunHeading").textContent = "Selected Gmail Cleanup Run";
-    byId("runSearchBtn").textContent = "Run Gmail Cleanup";
+    byId("dashboardTitle").textContent = "Career transition analysis";
+    byId("dashboardDescription").textContent = "Bridge roles, transferable strengths, and transition plans appear here after you run.";
+    byId("historyTitle").textContent = "Transition runs";
+    byId("selectedRunHeading").textContent = "Selected run";
+    runSearchBtn.textContent = "Start transition analysis";
+    if (runIntentCopy) {
+      runIntentCopy.textContent = "Map a safe path from your current domain into a new career direction.";
+    }
   }
 
   const modeSelect = byId("mode");
   if (!jobsActive) {
-    modeSelect.value = upskillingActive ? "next-role" : transitionActive ? "career-transition" : "gmail-cleanup";
+    modeSelect.value = upskillingActive ? "next-role" : "career-transition";
     modeSelect.setAttribute("disabled", "disabled");
   } else {
     modeSelect.removeAttribute("disabled");
-    if (modeSelect.value === "next-role") {
+    if (modeSelect.value === "next-role" || modeSelect.value === "career-transition") {
       modeSelect.value = "search";
     }
   }
@@ -868,6 +869,90 @@ function syncDashboardUi() {
 
   renderSetupSummary();
   renderShortlistCriteria();
+  renderGetStartedUi();
+  syncWorkspaceTabUi();
+}
+
+function renderGetStartedUi() {
+  const resumeStep = document.querySelector('.get-started-step[data-step="resume"]');
+  const goalStep = document.querySelector('.get-started-step[data-step="goal"]');
+  const hasResume = Boolean(state.resumeIntake || state.setupStatus?.resume);
+  const hasGoal = Boolean(state.dashboard);
+
+  if (resumeStep) {
+    resumeStep.classList.toggle("is-complete", hasResume);
+  }
+  if (goalStep) {
+    goalStep.classList.toggle("is-complete", hasGoal);
+  }
+
+  const insightStrip = byId("insightStripSection");
+  if (insightStrip) {
+    const showInsights = (state.history || []).length > 0 || state.activeStatus?.status === "running";
+    insightStrip.hidden = !showInsights;
+  }
+}
+
+function workspaceTabConfig() {
+  if (state.dashboard === "upskilling") {
+    return {
+      barId: "upskillTabBar",
+      tabAttr: "upskillTab",
+      panelAttr: "upskillPanel",
+      groupId: "upskillingDashboardGroup",
+      tabs: ["overview", "runs", "learning"]
+    };
+  }
+  if (state.dashboard === "transition") {
+    return {
+      barId: "transitionTabBar",
+      tabAttr: "transitionTab",
+      panelAttr: "transitionPanel",
+      groupId: "transitionDashboardGroup",
+      tabs: ["overview", "runs", "plan"]
+    };
+  }
+  return {
+    barId: "jobsTabBar",
+    tabAttr: "jobsTab",
+    panelAttr: "jobsPanel",
+    groupId: "jobsDashboardGroup",
+    tabs: ["overview", "runs", "jobs", "tracker"]
+  };
+}
+
+function syncWorkspaceTabUi() {
+  const config = workspaceTabConfig();
+  const activeTab = state.workspaceTab[state.dashboard] || "overview";
+  const group = byId(config.groupId);
+  if (!group) {
+    return;
+  }
+
+  group.querySelectorAll(".workspace-tab").forEach((button) => {
+    const tabName = button.dataset[config.tabAttr];
+    const isActive = tabName === activeTab;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-selected", isActive ? "true" : "false");
+  });
+
+  group.querySelectorAll("[data-jobs-panel], [data-upskill-panel], [data-transition-panel]").forEach((panel) => {
+    const panelName =
+      panel.dataset.jobsPanel || panel.dataset.upskillPanel || panel.dataset.transitionPanel;
+    const isActive = panelName === activeTab;
+    panel.classList.toggle("active", isActive);
+    panel.hidden = !isActive;
+  });
+}
+
+function setWorkspaceTab(nextTab, options = {}) {
+  const config = workspaceTabConfig();
+  const normalized = config.tabs.includes(nextTab) ? nextTab : "overview";
+  state.workspaceTab[state.dashboard] = normalized;
+  syncWorkspaceTabUi();
+  if (options.scrollTop !== false) {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 }
 
 function setDashboard(nextDashboard, options = {}) {
@@ -876,8 +961,6 @@ function setDashboard(nextDashboard, options = {}) {
       ? "upskilling"
       : nextDashboard === "transition"
         ? "transition"
-        : nextDashboard === "gmail"
-          ? "gmail"
         : "jobs";
   if (options.syncHash !== false) {
     syncDashboardHash();
@@ -1227,6 +1310,43 @@ function formatAgentName(agentName) {
   return humanizeKey(String(agentName).replace(/-agent$/i, ""));
 }
 
+function canResumeRun(run) {
+  return Boolean(run?.canResume || (state.activeStatus?.recoverable?.runId === run?.runId && state.activeStatus?.recoverable?.canResume));
+}
+
+function canReplayRun(run) {
+  return ["completed", "failed", "interrupted"].includes(run?.status);
+}
+
+function renderRecoverableRunBanner() {
+  const banner = byId("recoverableRunBanner");
+  if (!banner) {
+    return;
+  }
+
+  const recoverable = state.activeStatus?.recoverable;
+  if (!recoverable?.canResume || state.activeStatus?.status === "running") {
+    banner.hidden = true;
+    banner.innerHTML = "";
+    return;
+  }
+
+  banner.hidden = false;
+  banner.innerHTML = `
+    <div class="recoverable-run-banner__copy">
+      <h3>Interrupted run ready to resume</h3>
+      <p>
+        ${escapeHtml(recoverable.mode || "search")} on ${escapeHtml(recoverable.portal || "both")}
+        from ${formatDateTime(recoverable.startedAt)} can continue from the last checkpoint.
+      </p>
+    </div>
+    <div class="recoverable-run-banner__actions">
+      <button type="button" class="button primary" data-run-action="resume" data-run-id="${escapeHtml(recoverable.runId)}">Resume run</button>
+      <button type="button" class="button secondary" data-run-action="replay" data-run-id="${escapeHtml(recoverable.runId)}">Replay from start</button>
+    </div>
+  `;
+}
+
 function renderRunStatus(status) {
   const badge = byId("runBadge");
   const meta = byId("runMeta");
@@ -1237,30 +1357,34 @@ function renderRunStatus(status) {
 
   meta.textContent =
     currentStatus === "running"
-      ? status?.mode === "gmail-cleanup"
-        ? `Running Gmail cleanup since ${formatDateTime(status.startedAt)}`
-        : `Running ${status.mode || "search"} on ${status.portal || "both"} since ${formatDateTime(status.startedAt)}`
+      ? `Running ${status.mode || "search"} on ${status.portal || "both"} since ${formatDateTime(status.startedAt)}`
       : currentStatus === "completed"
         ? `Last run finished at ${formatDateTime(status.finishedAt)}`
         : currentStatus === "failed"
           ? `Last run failed at ${formatDateTime(status.finishedAt)}`
-          : "No run in progress.";
+          : currentStatus === "interrupted"
+            ? "A previous run was interrupted and can be resumed from its checkpoint."
+            : status?.recoverable?.canResume
+              ? "An interrupted run can be resumed from its last checkpoint."
+              : "No run in progress.";
+
+  renderRecoverableRunBanner();
 }
 
 function renderPipeline() {
   const board = byId("pipelineBoard");
+  const upskillBoard = byId("upskillPipelineBoard");
   const meta = byId("pipelineMeta");
   const source = getDisplayPipeline();
 
-  meta.textContent = source.meta;
-
-  if (!source.pipeline.length) {
-    board.innerHTML = `<p class="empty-state">Pipeline stages will appear here.</p>`;
-    return;
+  if (meta) {
+    meta.textContent = source.meta;
   }
 
-  board.innerHTML = source.pipeline
-    .map((stage, index) => {
+  const boardHtml = !source.pipeline.length
+    ? `<p class="empty-state">Pipeline stages will appear here during a run.</p>`
+    : source.pipeline
+        .map((stage, index) => {
       const thoughtLines = unique(stage.thoughtLines || []).slice(-8);
       const hasThoughtLines = thoughtLines.length > 0;
       const shouldExpandThoughts = stage.status === "running" || stage.status === "failed";
@@ -1309,6 +1433,13 @@ function renderPipeline() {
       `;
     })
     .join("");
+
+  if (board) {
+    board.innerHTML = boardHtml;
+  }
+  if (upskillBoard) {
+    upskillBoard.innerHTML = boardHtml;
+  }
 }
 
 function renderResumeIntake() {
@@ -1317,9 +1448,10 @@ function renderResumeIntake() {
   const preview = byId("resumePreview");
 
   if (!state.resumeIntake) {
-    meta.textContent = "No resume uploaded yet. Supported formats: PDF, DOCX, TXT, MD.";
+    meta.textContent = "No resume uploaded yet. PDF, DOCX, TXT, or MD.";
     detected.innerHTML = "";
     preview.textContent = "Resume preview will appear here after parsing.";
+    renderGetStartedUi();
     return;
   }
 
@@ -1337,39 +1469,56 @@ function renderResumeIntake() {
 
   detected.innerHTML = pills.map((item) => `<span class="detected-pill">${item}</span>`).join("");
   preview.textContent = state.resumeIntake.extractedTextPreview || "No preview available.";
+  renderGetStartedUi();
+}
+
+function renderHistoryItemHtml(item) {
+  const activeClass = state.selectedRunId === item.runId ? "active" : "";
+  const summaryEntries = item.summary ? Object.entries(item.summary) : [];
+  const summary =
+    summaryEntries.length > 0
+      ? summaryEntries
+          .slice(0, 4)
+          .map(([key, value]) => `<span class="history-stat">${escapeHtml(humanizeKey(key))}: ${escapeHtml(formatSummaryValue(value))}</span>`)
+          .join("")
+      : `<span class="history-stat subtle">No summary yet</span>`;
+  const finishedLine = item.finishedAt
+    ? `<span class="history-time">Finished ${formatDateTime(item.finishedAt)}</span>`
+    : "";
+
+  return `
+    <button type="button" class="history-item ${item.status} ${activeClass}" data-run-id="${item.runId}">
+      <div class="history-top">
+        <span class="history-dot ${item.status}"></span>
+        <strong class="history-type">${escapeHtml(item.mode || "search")}</strong>
+        <span class="history-type-label">${escapeHtml(item.portal || "both")}</span>
+        <span class="status-pill ${item.status}">${escapeHtml(item.status || "unknown")}</span>
+      </div>
+      <div class="history-times">
+        <span class="history-time">${formatDateTime(item.startedAt)}</span>
+        ${finishedLine}
+      </div>
+      <div class="history-stats">${summary}</div>
+    </button>
+  `;
 }
 
 function renderHistory() {
-  const container = byId("runHistoryList");
   const history = historyForDashboard();
+  const html = history.length
+    ? history.map((item) => renderHistoryItemHtml(item)).join("")
+    : `<p class="empty-state">No runs yet for this dashboard.</p>`;
 
-  if (!history.length) {
-    container.innerHTML = `<p class="empty-state">No runs yet for this dashboard.</p>`;
-    return;
+  const containers = [byId("runHistoryList")];
+  if (state.dashboard === "upskilling") {
+    containers.push(byId("upskillRunHistoryList"));
   }
-
-  container.innerHTML = history
-    .map((item) => {
-      const activeClass = state.selectedRunId === item.runId ? "active" : "";
-      const summary = item.summary
-        ? Object.entries(item.summary)
-            .slice(0, 2)
-            .map(([key, value]) => `${humanizeKey(key)}: ${value}`)
-            .join(" | ")
-        : "No summary yet.";
-
-      return `
-        <button type="button" class="history-item ${item.status} ${activeClass}" data-run-id="${item.runId}">
-          <div class="history-top">
-            <span class="history-dot ${item.status}"></span>
-            <strong>${item.mode || "search"} | ${item.portal || "both"}</strong>
-            <span>${formatDateTime(item.startedAt)}</span>
-          </div>
-          <p>${summary}</p>
-        </button>
-      `;
-    })
-    .join("");
+  if (state.dashboard === "transition") {
+    containers.push(byId("transitionRunHistoryList"));
+  }
+  for (const container of containers.filter(Boolean)) {
+    container.innerHTML = html;
+  }
 }
 
 function renderSelectedRunMeta() {
@@ -1379,72 +1528,91 @@ function renderSelectedRunMeta() {
   if (!selectedRun) {
     meta.textContent =
       state.dashboard === "jobs"
-        ? "Select a job-focused run to inspect eligible roles and shortlist outputs."
+        ? "Run results and job outputs appear here after you start an analysis above."
         : state.dashboard === "upskilling"
           ? "Select an upskilling run to inspect skill gaps, learning paths, and course recommendations."
-          : state.dashboard === "transition"
-            ? "Select a transition run to inspect bridge roles, transferable strengths, and transition strategy."
-            : "Select a Gmail cleanup run to inspect the cleanup query, action, matched count, and email preview.";
+          : "Select a transition run to inspect bridge roles, transferable strengths, and transition strategy.";
     return;
   }
 
   meta.textContent = `Selected run ${selectedRun.runId} | ${selectedRun.mode} on ${selectedRun.portal} | ${selectedRun.status} | started ${formatDateTime(selectedRun.startedAt)}${selectedRun.finishedAt ? ` | finished ${formatDateTime(selectedRun.finishedAt)}` : ""}`;
 }
 
-function renderBackendLogAccess() {
-  const meta = byId("backendLogMeta");
-  const actions = byId("backendLogActions");
-  const run = getRunForBackendLogAccess();
-
-  if (!run) {
-    meta.textContent = "Select a run or start a workflow to access its backend trace file.";
-    actions.innerHTML = `<p class="empty-state">A run-specific backend log link will appear here.</p>`;
+function renderRunDetailPanel() {
+  const panel = byId("runDetailPanel");
+  if (!panel) {
     return;
   }
 
-  meta.textContent =
-    run.status === "running"
-      ? `Backend trace for active run ${run.runId}. The file keeps updating while the state machine advances.`
-      : `Backend trace for run ${run.runId}. Open the file for the complete execution log.`;
-
-  const primaryLinks = [];
-  if (run.logPath) {
-    primaryLinks.push(artifactLink("Open Backend Log", run.logPath));
+  const run = getSelectedRunEntryForDashboard() || getRunForBackendLogAccess();
+  if (!run) {
+    panel.innerHTML = `<p class="empty-state">Select a run above to view details, reports, and export options.</p>`;
+    return;
   }
 
-  const detailLinks = [];
+  const summaryRows = run.summary
+    ? Object.entries(run.summary)
+        .map(
+          ([key, value]) =>
+            `<div class="run-detail-stat"><span>${escapeHtml(humanizeKey(key))}</span><strong>${escapeHtml(formatSummaryValue(value))}</strong></div>`
+        )
+        .join("")
+    : `<p class="subtle">Summary metrics will appear when the run completes.</p>`;
+
+  const exportLinks = [];
+  const runActions = [];
+
+  if (run.status === "interrupted" && canResumeRun(run)) {
+    runActions.push(
+      `<button type="button" class="button primary" data-run-action="resume" data-run-id="${escapeHtml(run.runId)}">Resume from checkpoint</button>`
+    );
+  }
+
+  if (canReplayRun(run)) {
+    runActions.push(
+      `<button type="button" class="button secondary" data-run-action="replay" data-run-id="${escapeHtml(run.runId)}">Replay run</button>`
+    );
+  }
+
   if (run.runId === state.selectedRunId) {
     if (state.selectedResults?.report?.fullPath) {
-      detailLinks.push(artifactLink("Agent Report", state.selectedResults.report.fullPath));
-    }
-    if (state.selectedResults?.jobs?.fullPath) {
-      detailLinks.push(artifactLink("Jobs Snapshot", state.selectedResults.jobs.fullPath));
+      exportLinks.push(artifactLink("View report", state.selectedResults.report.fullPath));
     }
     if (state.selectedResults?.shortlist?.fullPath) {
-      detailLinks.push(artifactLink("Shortlist", state.selectedResults.shortlist.fullPath));
+      exportLinks.push(artifactLink("Shortlist file", state.selectedResults.shortlist.fullPath));
     }
     if (state.selectedRunId && state.selectedResults?.shortlist?.data?.length) {
-      detailLinks.push(
-        `<a href="/api/export/csv?runId=${encodeURIComponent(state.selectedRunId)}" download>Export CSV</a>`
+      exportLinks.push(
+        `<a class="button tertiary" href="/api/export/csv?runId=${encodeURIComponent(state.selectedRunId)}" download>Export CSV</a>`
       );
-    }
-    if (state.selectedResults?.gmail?.fullPath) {
-      detailLinks.push(artifactLink("Gmail Report", state.selectedResults.gmail.fullPath));
     }
   }
 
-  actions.innerHTML = `
-    <div class="backend-log-card">
-      <div class="backend-log-top">
-        <span class="backend-log-label">Run Trace</span>
-        <code class="backend-log-path">${escapeHtml(run.logPath || "Log file path unavailable")}</code>
-      </div>
-      <div class="backend-log-links">
-        ${primaryLinks.join("") || `<span class="subtle">Log file not available yet.</span>`}
-        ${detailLinks.join("")}
-      </div>
+  panel.innerHTML = `
+    <div class="run-detail-grid">
+      <dl class="run-detail-meta">
+        <div><dt>Run</dt><dd><code>${escapeHtml(run.runId)}</code></dd></div>
+        <div><dt>Type</dt><dd>${escapeHtml(run.mode || "search")}</dd></div>
+        <div><dt>Portal</dt><dd>${escapeHtml(run.portal || "both")}</dd></div>
+        <div><dt>Status</dt><dd><span class="status-pill ${run.status}">${escapeHtml(run.status || "unknown")}</span></dd></div>
+        <div><dt>Started</dt><dd>${formatDateTime(run.startedAt)}</dd></div>
+        <div><dt>Finished</dt><dd>${run.finishedAt ? formatDateTime(run.finishedAt) : "In progress"}</dd></div>
+      </dl>
+      <div class="run-detail-stats">${summaryRows}</div>
+      <div class="run-detail-actions">${[...runActions, ...exportLinks].join("") || `<span class="subtle">Exports appear when results load.</span>`}</div>
     </div>
   `;
+}
+
+function renderBackendLogAccess() {
+  renderRunDetailPanel();
+  const meta = byId("backendLogMeta");
+  const actions = byId("backendLogActions");
+  if (!meta || !actions) {
+    return;
+  }
+  meta.textContent = "";
+  actions.innerHTML = "";
 }
 
 function renderJobSummary() {
@@ -1464,80 +1632,6 @@ function renderJobSummary() {
           <span>${label}</span>
           <strong>${formatSummaryValue(value)}</strong>
         </div>
-      `
-    )
-    .join("");
-}
-
-function renderGmailSummary() {
-  const summaryStrip = byId("gmailSummaryStrip");
-  const selectedRun = getSelectedRunEntryForDashboard();
-  const report = state.selectedResults?.gmail?.data || null;
-
-  if (!selectedRun || !report) {
-    summaryStrip.innerHTML = `<p class="empty-state">Select a Gmail cleanup run to load cleanup metrics.</p>`;
-    return;
-  }
-
-  const metrics = [
-    ["Action", report.action || "preview"],
-    ["Matched Emails", report.totalMatched ?? 0],
-    ["Preview Sample", (report.preview || []).length],
-    ["Run Cap", report.maxMessages ?? "-"]
-  ];
-
-  summaryStrip.innerHTML = metrics
-    .map(
-      ([label, value]) => `
-        <div class="summary-metric">
-          <span>${label}</span>
-          <strong>${formatSummaryValue(value)}</strong>
-        </div>
-      `
-    )
-    .join("");
-}
-
-function renderGmailPreview() {
-  const queryCard = byId("gmailQueryCard");
-  const previewGrid = byId("gmailPreviewGrid");
-  const selectedRun = getSelectedRunEntryForDashboard();
-  const report = state.selectedResults?.gmail?.data || null;
-
-  if (!selectedRun || !report) {
-    queryCard.innerHTML = `<p class="empty-state">Select a Gmail cleanup run to inspect its search query and action.</p>`;
-    previewGrid.innerHTML = `<p class="empty-state">Matched promotional emails will preview here after a Gmail cleanup run.</p>`;
-    return;
-  }
-
-  queryCard.innerHTML = `
-    <article class="gmail-query-panel">
-      <p class="section-label">Active Query</p>
-      <h4>${escapeHtml(report.action || "preview")} promotional mail</h4>
-      <code class="gmail-query-code">${escapeHtml(report.query || "")}</code>
-      <p class="subtle">Generated ${escapeHtml(formatDateTime(report.generatedAt))}. Use preview first, then trash or delete only after you are comfortable with the matched sample.</p>
-    </article>
-  `;
-
-  const preview = report.preview || [];
-  if (!preview.length) {
-    previewGrid.innerHTML = `<p class="empty-state">This run did not include preview rows.</p>`;
-    return;
-  }
-
-  previewGrid.innerHTML = preview
-    .map(
-      (item) => `
-        <article class="gmail-mail-card">
-          <div class="gmail-mail-top">
-            <p class="gmail-mail-from">${escapeHtml(item.from || "Unknown sender")}</p>
-            <span class="route-pill">${escapeHtml(report.action || "preview")}</span>
-          </div>
-          <h4>${escapeHtml(item.subject || "(No subject)")}</h4>
-          <p class="gmail-mail-date">${escapeHtml(item.date || "")}</p>
-          <p class="gmail-mail-snippet">${escapeHtml(item.snippet || "")}</p>
-          <code class="gmail-mail-id">${escapeHtml(item.id || "")}</code>
-        </article>
       `
     )
     .join("");
@@ -1622,9 +1716,357 @@ function renderTransitionSummary() {
     .join("");
 }
 
+function formatApplyRouteLabel(route) {
+  const labels = {
+    linkedin_easy_apply: "LinkedIn Easy Apply",
+    email: "Email outreach",
+    workday: "Workday portal",
+    manual_review: "Manual review"
+  };
+  return labels[route] || humanizeKey(route || "manual_review");
+}
+
+function jobTrackerKey(job) {
+  return job.id || job.url || `${job.title}-${job.company}`;
+}
+
+function renderMatchPanel(node, job) {
+  const comparison = job.comparison || {};
+  const matched = comparison.matchedSkills || [];
+  const missing = comparison.missingPrioritySkills || [];
+  const scoreReason =
+    job.reason ||
+    job.salaryInsight?.bestBetReason ||
+    job.businessInsight?.recommendation ||
+    job.eligibility?.reason ||
+    "No detailed reason available.";
+
+  node.querySelector(".score-reason").textContent = scoreReason;
+  node.querySelector(".stability-line").textContent = job.businessInsight
+    ? `Company stability: ${job.businessInsight.stabilityLabel || "unknown"} (${job.businessInsight.stabilityScore ?? "-"}/100)`
+    : "Company stability: not evaluated for this run.";
+
+  node.querySelector(".match-skills").innerHTML = matched.length
+    ? `<span class="setup-summary-pill">Matched<strong>${escapeHtml(matched.slice(0, 8).join(", "))}</strong></span>`
+    : `<span class="subtle">No direct skill matches detected in the JD text.</span>`;
+
+  node.querySelector(".missing-skills").innerHTML = missing.length
+    ? `<span class="setup-summary-pill">Gaps<strong>${escapeHtml(missing.slice(0, 5).join(", "))}</strong></span>`
+    : "";
+}
+
+function renderTrackerActions(node, job) {
+  const key = jobTrackerKey(job);
+  const current = state.tracker?.jobs?.[key]?.state || "saved";
+  const actions = node.querySelector(".tracker-actions");
+  if (!actions) {
+    return;
+  }
+
+  actions.innerHTML = `
+    <label class="compact-input tracker-state-select">
+      <span>Tracker</span>
+      <select data-tracker-key="${escapeHtml(key)}" class="tracker-state-input">
+        ${["saved", "drafted", "applied", "interview", "offer", "rejected"]
+          .map((value) => `<option value="${value}" ${value === current ? "selected" : ""}>${humanizeKey(value)}</option>`)
+          .join("")}
+      </select>
+    </label>
+    <button type="button" class="button tertiary resume-diff-btn" data-resume-path="${escapeHtml(job.tailoredResume?.jsonPath || "")}">Resume diff</button>
+  `;
+}
+
+function sortShortlistJobs(jobs) {
+  const sortBy = byId("shortlistSortSelect")?.value || "overallBet";
+  const sorted = [...jobs];
+  sorted.sort((a, b) => {
+    if (sortBy === "fit") {
+      return (b.score || 0) - (a.score || 0);
+    }
+    if (sortBy === "salary") {
+      return (b.salaryInsight?.bestBetScore || 0) - (a.salaryInsight?.bestBetScore || 0);
+    }
+    if (sortBy === "company") {
+      return String(a.company || "").localeCompare(String(b.company || ""));
+    }
+    return (b.overallBetScore || 0) - (a.overallBetScore || 0);
+  });
+  return sorted;
+}
+
+function dedupeJobs(jobs) {
+  const seen = new Map();
+  const result = [];
+  for (const job of jobs || []) {
+    const key = String(job.url || `${job.title}-${job.company}`).toLowerCase();
+    if (!seen.has(key)) {
+      seen.set(key, job);
+      result.push(job);
+    } else {
+      const prior = seen.get(key);
+      prior.seenCount = (prior.seenCount || 1) + 1;
+      prior.staleCandidate = prior.seenCount > 2;
+    }
+  }
+  return result;
+}
+
+async function loadTracker() {
+  state.tracker = await fetchJson("/api/tracker");
+  renderTrackerBoard();
+}
+
+async function updateTrackerJob(jobKey, patch) {
+  state.tracker = await fetchJson("/api/tracker", {
+    method: "POST",
+    body: JSON.stringify({ jobKey, ...patch })
+  });
+  renderTrackerBoard();
+  renderShortlist();
+}
+
+function renderTrackerBoard() {
+  const board = byId("trackerBoard");
+  if (!board) {
+    return;
+  }
+
+  const entries = Object.values(state.tracker?.jobs || {});
+  if (!entries.length) {
+    board.innerHTML = `<p class="empty-state">Mark jobs from the shortlist to track saved, applied, interview, and rejected states.</p>`;
+    return;
+  }
+
+  board.innerHTML = entries
+    .sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)))
+    .map(
+      (entry) => `
+        <article class="tracker-row">
+          <div>
+            <strong>${escapeHtml(entry.title || entry.jobId)}</strong>
+            <p class="subtle">${escapeHtml(entry.company || "")} · ${humanizeKey(entry.state)}</p>
+          </div>
+          ${entry.rejectReason ? `<p class="subtle">Reason: ${escapeHtml(entry.rejectReason)}</p>` : ""}
+        </article>
+      `
+    )
+    .join("");
+}
+
+function renderEmailDraftsPanel() {
+  const panel = byId("emailDraftsPanel");
+  if (!panel) {
+    return;
+  }
+
+  const drafts = state.selectedResults?.emailDrafts?.data || [];
+  if (!drafts.length) {
+    panel.innerHTML = `<p class="empty-state">Email-apply drafts appear here when a run includes email-route roles.</p>`;
+    return;
+  }
+
+  panel.innerHTML = drafts
+    .map((item) => {
+      const draft = item.draft || {};
+      const job = item.job || {};
+      return `
+        <article class="email-draft-card">
+          <h4>${escapeHtml(job.title || "Role")} · ${escapeHtml(job.company || "")}</h4>
+          <p class="subtle"><strong>Subject:</strong> ${escapeHtml(draft.subject || "")}</p>
+          <pre class="email-draft-body">${escapeHtml(draft.body || "")}</pre>
+          <div class="card-links">
+            ${item.attachmentPath ? artifactLink("Attachment", item.attachmentPath) : ""}
+            <button type="button" class="button tertiary copy-draft-btn" type="button">Copy body</button>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+}
+
+async function renderWeeklySummaryStrip() {
+  const strip = byId("weeklySummaryStrip");
+  if (!strip) {
+    return;
+  }
+
+  try {
+    const summary = await fetchJson("/api/weekly-summary");
+    strip.innerHTML = [
+      ["Runs this week", summary.runsThisWeek],
+      ["Jobs found", summary.jobsFound],
+      ["Applied", summary.applied],
+      ["Interviews", summary.interviews],
+      ["Rejections", summary.rejections]
+    ]
+      .map(
+        ([label, value]) => `
+          <div class="summary-metric">
+            <span>${label}</span>
+            <strong>${formatSummaryValue(value)}</strong>
+          </div>
+        `
+      )
+      .join("");
+  } catch {
+    strip.innerHTML = `<p class="empty-state">Weekly summary unavailable.</p>`;
+  }
+}
+
+function renderWizardPanel(status) {
+  const section = byId("wizardSection");
+  if (!section || !status?.wizard) {
+    return;
+  }
+
+  const wizard = status.wizard;
+  if (wizard.complete || wizard.dismissed) {
+    section.hidden = true;
+    return;
+  }
+
+  section.hidden = false;
+  const steps = [
+    ["resume", "Upload or configure your resume", wizard.steps.resume],
+    ["demo", "Run demo to preview a shortlist", wizard.steps.demo],
+    ["filters", "Set search preferences in Settings", wizard.steps.filters],
+    ["llm", "Optional: configure LLM or use keyword-only", wizard.steps.llm],
+    ["portal", "Optional: acknowledge portal terms", wizard.steps.portal]
+  ];
+
+  byId("wizardSteps").innerHTML = steps
+    .map(
+      ([id, label, done]) => `
+        <li class="${done ? "done" : ""} ${wizard.currentStep === id ? "active" : ""}">
+          <strong>${escapeHtml(label)}</strong>
+        </li>
+      `
+    )
+    .join("");
+
+  const actions = byId("wizardActions");
+  if (wizard.currentStep === "demo") {
+    actions.innerHTML = `<button id="wizardDemoBtn" class="button primary" type="button">Run demo now</button>`;
+    byId("wizardDemoBtn")?.addEventListener("click", () => runDemoWorkflow());
+  } else if (wizard.currentStep === "resume") {
+    actions.innerHTML = `<button class="button secondary" type="button" onclick="document.getElementById('resumeUploadBtn').click()">Upload resume</button>`;
+  } else if (wizard.currentStep === "filters") {
+    actions.innerHTML = `<button class="button secondary" type="button" onclick="document.getElementById('openWorkspacePanelInlineBtn').click()">Open settings</button>`;
+  } else {
+    actions.innerHTML = `<p class="subtle">Complete the highlighted step to continue.</p>`;
+  }
+}
+
+function populateCompareRunSelects() {
+  const selectA = byId("compareRunA");
+  const selectB = byId("compareRunB");
+  if (!selectA || !selectB) {
+    return;
+  }
+
+  const options = (state.history || [])
+    .map((entry) => `<option value="${escapeHtml(entry.runId)}">${escapeHtml(entry.runId)} · ${escapeHtml(entry.mode)}</option>`)
+    .join("");
+
+  selectA.innerHTML = `<option value="">Compare run A</option>${options}`;
+  selectB.innerHTML = `<option value="">Compare run B</option>${options}`;
+}
+
+async function renderRunComparePanel() {
+  const panel = byId("runComparePanel");
+  const runA = byId("compareRunA")?.value;
+  const runB = byId("compareRunB")?.value;
+  if (!panel || !runA || !runB) {
+    return;
+  }
+
+  const comparison = await fetchJson("/api/runs/compare", {
+    method: "POST",
+    body: JSON.stringify({ runA, runB })
+  });
+
+  panel.innerHTML = `
+    <div class="summary-strip">
+      <div class="summary-metric"><span>Added</span><strong>${comparison.summary.added}</strong></div>
+      <div class="summary-metric"><span>Removed</span><strong>${comparison.summary.removed}</strong></div>
+      <div class="summary-metric"><span>Shared</span><strong>${comparison.summary.shared}</strong></div>
+    </div>
+  `;
+}
+
+function showAboutModal() {
+  const modal = byId("aboutMeridianModal");
+  if (modal) {
+    modal.hidden = false;
+  }
+}
+
+function hideAboutModal() {
+  const modal = byId("aboutMeridianModal");
+  if (modal) {
+    modal.hidden = true;
+  }
+}
+
+function showPortalAckModal() {
+  const modal = byId("portalAckModal");
+  if (modal) {
+    modal.hidden = false;
+  }
+}
+
+function hidePortalAckModal() {
+  const modal = byId("portalAckModal");
+  if (modal) {
+    modal.hidden = true;
+  }
+}
+
+async function showResumeDiffModal(jsonPath) {
+  if (!jsonPath) {
+    return;
+  }
+  const modal = byId("resumeDiffModal");
+  const body = byId("resumeDiffBody");
+  modal.hidden = false;
+  body.innerHTML = `<p class="empty-state">Loading diff...</p>`;
+  const diff = await fetchJson(`/api/resume-diff?path=${encodeURIComponent(jsonPath)}`);
+  if (!diff.ok) {
+    body.innerHTML = `<p class="empty-state">${escapeHtml(diff.error || "Diff unavailable.")}</p>`;
+    return;
+  }
+  body.innerHTML = diff.sections
+    .map(
+      (section) => `
+        <section class="resume-diff-section ${section.changed ? "changed" : ""}">
+          <h4>${escapeHtml(section.label)}</h4>
+          ${section.changed ? `<pre>${escapeHtml(section.before)}\n---\n${escapeHtml(section.after)}</pre>` : `<p class="subtle">No changes</p>`}
+        </section>
+      `
+    )
+    .join("");
+}
+
+function applyOllamaPreset() {
+  setFormValue("llmProvider", "openai-compatible");
+  setFormValue("llmBaseUrl", "http://127.0.0.1:11434/v1");
+  setFormValue("llmModel", "llama3.2");
+  setFormValue("llmApiKey", "ollama");
+  byId("llmTestMeta").textContent = "Ollama preset applied. Save preferences and test connection.";
+}
+
+async function completeWizardStep(step) {
+  state.setupStatus = await fetchJson("/api/wizard/complete-step", {
+    method: "POST",
+    body: JSON.stringify({ step })
+  });
+  renderSetupChecklist(state.setupStatus);
+  renderWizardPanel(state.setupStatus);
+}
+
 function renderShortlist() {
   const container = byId("shortlistGrid");
-  const jobs = state.selectedResults?.shortlist?.data || [];
+  const jobs = sortShortlistJobs(state.selectedResults?.shortlist?.data || []);
   const selectedRun = getSelectedRunEntryForDashboard();
 
   if (!selectedRun) {
@@ -1654,7 +2096,9 @@ function renderShortlist() {
       job.eligibility?.reason ||
       "No reasoning available.";
     node.querySelector(".work-pill").textContent = job.eligibility?.workArrangement || "unknown arrangement";
-    node.querySelector(".route-pill").textContent = job.applyRoute || "manual_review";
+    node.querySelector(".route-pill").textContent = formatApplyRouteLabel(job.applyRoute);
+    renderMatchPanel(node, job);
+    renderTrackerActions(node, job);
 
     const pill = node.querySelector(".eligibility-pill");
     pill.textContent = job.eligibility?.eligible ? "Eligible" : "Ineligible";
@@ -1782,7 +2226,7 @@ function renderMarketBoard() {
     return;
   }
 
-  let filtered = [...jobs];
+  let filtered = dedupeJobs([...jobs]);
 
   if (searchTerm) {
     filtered = filtered
@@ -1826,7 +2270,8 @@ function renderMarketBoard() {
       const tags = [
         job.eligibility?.eligible ? "eligible" : "ineligible",
         job.eligibility?.workArrangement || "unknown",
-        job.applyRoute || "manual_review"
+        formatApplyRouteLabel(job.applyRoute),
+        job.staleCandidate ? "possible stale" : null
       ]
         .filter(Boolean)
         .map((tag) => `<span class="route-pill">${tag}</span>`)
@@ -2291,7 +2736,6 @@ function renderSelectedResults() {
   renderUpskilledCategoryStrip();
   renderSelectedRunMeta();
   renderJobSummary();
-  renderGmailSummary();
   renderUpskillSummary();
   renderTransitionSummary();
   renderShortlist();
@@ -2306,7 +2750,10 @@ function renderSelectedResults() {
   renderTransitionCourseGrid();
   renderTransitionTaskList();
   renderTransitionStrategy();
-  renderGmailPreview();
+  renderEmailDraftsPanel();
+  renderWeeklySummaryStrip();
+  renderTrackerBoard();
+  renderRunDetailPanel();
 }
 
 async function loadConfig() {
@@ -2329,29 +2776,34 @@ async function loadHistory() {
   renderHistory();
   renderPipeline();
   renderSelectedRunMeta();
+  populateCompareRunSelects();
   await loadUpskilledCategories();
 }
 
-async function selectRun(runId) {
+async function selectRun(runId, options = {}) {
   state.selectedRunId = runId;
   state.followActiveRun = state.activeStatus?.status === "running" && state.activeStatus?.runId === runId;
   state.selectedResults = await fetchJson(`/api/results?runId=${encodeURIComponent(runId)}`);
 
   const selectedRun = getSelectedRunEntry();
   if (selectedRun) {
-    state.dashboard = isGmailRun(selectedRun)
-      ? "gmail"
-      : isTransitionRun(selectedRun)
-        ? "transition"
-        : isUpskillingRun(selectedRun)
-          ? "upskilling"
-          : "jobs";
+    state.dashboard = isTransitionRun(selectedRun)
+      ? "transition"
+      : isUpskillingRun(selectedRun)
+        ? "upskilling"
+        : "jobs";
   }
 
   syncDashboardUi();
   renderHistory();
   renderPipeline();
   renderSelectedResults();
+  if (options.focusTab !== false) {
+    const preferTab =
+      options.preferTab ||
+      (state.workspaceTab[state.dashboard] === "runs" ? "runs" : "overview");
+    setWorkspaceTab(preferTab, { scrollTop: false });
+  }
 }
 
 function clearSelectedRun() {
@@ -2371,6 +2823,11 @@ async function pollStatus() {
 
   if (status.runId && status.status === "running") {
     await loadHistory();
+    renderGetStartedUi();
+    if (!state.selectedRunId || state.selectedRunId !== status.runId) {
+      await selectRun(status.runId, { preferTab: "overview", focusTab: false });
+      state.followActiveRun = true;
+    }
   }
 
   const completionKey =
@@ -2382,9 +2839,50 @@ async function pollStatus() {
     state.lastHandledCompletionKey = completionKey;
     await loadHistory();
     if (state.followActiveRun) {
-      await selectRun(status.runId);
+      await selectRun(status.runId, { preferTab: "overview" });
       state.followActiveRun = false;
     }
+  }
+}
+
+async function resumeRun(runId) {
+  const run = await fetchJson("/api/run/resume", {
+    method: "POST",
+    body: JSON.stringify({ runId })
+  });
+  state.followActiveRun = true;
+  state.selectedRunId = run.runId;
+  state.selectedResults = null;
+  setWorkspaceTab("overview");
+  await loadHistory();
+  await pollStatus();
+  renderSelectedResults();
+}
+
+async function replayRun(runId) {
+  const run = await fetchJson("/api/run/replay", {
+    method: "POST",
+    body: JSON.stringify({ runId })
+  });
+  state.followActiveRun = true;
+  state.selectedRunId = run.runId;
+  state.selectedResults = null;
+  setWorkspaceTab("overview");
+  await loadHistory();
+  await pollStatus();
+  renderSelectedResults();
+}
+
+async function reconnectRunSession() {
+  if (state.activeStatus?.status === "running" && state.activeStatus?.runId) {
+    state.followActiveRun = true;
+    await selectRun(state.activeStatus.runId, { preferTab: "overview", focusTab: false });
+    return;
+  }
+
+  const recoverable = state.activeStatus?.recoverable;
+  if (recoverable?.runId) {
+    await selectRun(recoverable.runId, { preferTab: "runs", focusTab: false });
   }
 }
 
@@ -2399,6 +2897,12 @@ async function saveConfig() {
   renderShortlistCriteria();
   await refreshLabelSuggestions();
   await loadSetupStatus();
+  if ((state.labelStacks.searchQueries || []).length) {
+    await completeWizardStep("filters");
+  }
+  if (byId("llmProvider")?.value === "keyword-only" || byId("llmApiKey")?.value || byId("llmWebhookUrl")?.value) {
+    await completeWizardStep("llm");
+  }
 }
 
 function buildDerivedQueryFromCategory(category) {
@@ -2444,21 +2948,30 @@ async function applyUpskilledCategory(category) {
 
 async function runWorkflow() {
   const mode = getRunModeForDashboard();
+  if (mode !== "demo" && state.setupStatus?.wizard?.demoRequiredBeforeRun) {
+    alert("Complete the demo step in the first-run wizard before starting a portal run.");
+    return;
+  }
+
+  if (mode !== "demo" && !state.setupStatus?.wizard?.portalAcknowledged) {
+    state.pendingPortalRun = true;
+    showPortalAckModal();
+    return;
+  }
+
   await saveConfig();
   const run = await fetchJson("/api/run", {
     method: "POST",
     body: JSON.stringify({
       portal: byId("portal").value,
       mode,
-      headed: byId("headed").checked,
-      gmailAction: byId("gmailAction").value,
-      gmailQuery: byId("gmailQuery").value.trim(),
-      gmailMaxMessages: Number(byId("gmailMaxMessagesPerRun").value || 0)
+      headed: byId("headed").checked
     })
   });
   state.followActiveRun = true;
   state.selectedRunId = run.runId;
   state.selectedResults = null;
+  setWorkspaceTab("overview");
   await loadHistory();
   await pollStatus();
   renderSelectedResults();
@@ -2498,12 +3011,16 @@ async function handleResumeUpload(file) {
   populateForm(state.config);
   await refreshLabelSuggestions();
   renderResumeIntake();
+  await completeWizardStep("resume");
 }
 
 async function loadSetupStatus() {
   try {
     const status = await fetchJson("/api/setup-status");
+    state.setupStatus = status;
     renderSetupChecklist(status);
+    renderWizardPanel(status);
+    renderGetStartedUi();
   } catch {
     /* ignore */
   }
@@ -2515,9 +3032,15 @@ function renderSetupChecklist(status) {
     return;
   }
 
+  const merged = {
+    ...status,
+    demo: status.wizard?.steps?.demo,
+    portals: Boolean(status.portals?.linkedin?.ok || status.portals?.naukri?.ok)
+  };
+
   list.querySelectorAll("li").forEach((item) => {
     const key = item.dataset.key;
-    if (status[key]) {
+    if (merged[key]) {
       item.classList.add("done");
     } else {
       item.classList.remove("done");
@@ -2537,6 +3060,10 @@ async function runDemoWorkflow() {
   await loadHistory();
   await pollStatus();
   renderSelectedResults();
+  await completeWizardStep("demo");
+  if ((state.labelStacks.searchQueries || []).length) {
+    await completeWizardStep("filters");
+  }
 }
 
 async function initialize() {
@@ -2544,11 +3071,14 @@ async function initialize() {
   await loadConfig();
   renderResumeIntake();
   syncDashboardUi();
+  syncWorkspaceTabUi();
   syncDashboardHash();
   clearSelectedRun();
   await loadHistory();
   await loadSetupStatus();
+  await loadTracker();
   await pollStatus();
+  await reconnectRunSession();
 
   state.polling = setInterval(async () => {
     await pollStatus();
@@ -2567,13 +3097,49 @@ byId("testLlmBtn").addEventListener("click", async () => {
 
 [
   ["openWorkspacePanelBtn", "runGuardrailsBlock"],
-  ["openWorkspacePanelInlineBtn", "runGuardrailsBlock"],
-  ["openWorkspaceNavBtn", "profileSetupBlock"],
-  ["openGmailSetupBtn", "gmailSection"]
+  ["openWorkspacePanelInlineBtn", "runGuardrailsBlock"]
 ].forEach(([id, sectionId]) => {
-  byId(id).addEventListener("click", () => {
+  byId(id)?.addEventListener("click", () => {
     setWorkspacePanelOpen(true, { sectionId });
   });
+});
+
+byId("openAboutModalBtn")?.addEventListener("click", () => {
+  showAboutModal();
+});
+
+byId("closeAboutModalBtn")?.addEventListener("click", () => {
+  hideAboutModal();
+});
+
+byId("aboutMeridianModal")?.addEventListener("click", (event) => {
+  if (event.target.id === "aboutMeridianModal") {
+    hideAboutModal();
+  }
+});
+
+byId("jobsTabBar")?.addEventListener("click", (event) => {
+  const tab = event.target.closest("[data-jobs-tab]");
+  if (!tab) {
+    return;
+  }
+  setWorkspaceTab(tab.dataset.jobsTab);
+});
+
+byId("upskillTabBar")?.addEventListener("click", (event) => {
+  const tab = event.target.closest("[data-upskill-tab]");
+  if (!tab) {
+    return;
+  }
+  setWorkspaceTab(tab.dataset.upskillTab);
+});
+
+byId("transitionTabBar")?.addEventListener("click", (event) => {
+  const tab = event.target.closest("[data-transition-tab]");
+  if (!tab) {
+    return;
+  }
+  setWorkspaceTab(tab.dataset.transitionTab);
 });
 
 ["closeWorkspacePanelBtn", "closeWorkspacePanelFooterBtn"].forEach((id) => {
@@ -2588,6 +3154,30 @@ byId("workspacePanelBackdrop").addEventListener("click", () => {
 
 byId("runSearchBtn").addEventListener("click", async () => {
   await runWorkflow();
+});
+
+document.addEventListener("click", async (event) => {
+  const actionButton = event.target.closest("[data-run-action]");
+  if (!actionButton) {
+    return;
+  }
+
+  const runId = actionButton.dataset.runId;
+  const action = actionButton.dataset.runAction;
+  if (!runId || !action) {
+    return;
+  }
+
+  event.preventDefault();
+  try {
+    if (action === "resume") {
+      await resumeRun(runId);
+    } else if (action === "replay") {
+      await replayRun(runId);
+    }
+  } catch (error) {
+    alert(error.message || "Unable to perform run action.");
+  }
 });
 
 byId("runDemoBtn").addEventListener("click", async () => {
@@ -2609,11 +3199,6 @@ byId("transitionDashboardBtn").addEventListener("click", (event) => {
   setDashboard("transition");
 });
 
-byId("gmailDashboardBtn").addEventListener("click", (event) => {
-  event.preventDefault();
-  setDashboard("gmail");
-});
-
 window.addEventListener("hashchange", () => {
   setDashboard(dashboardFromHash(), { syncHash: false });
 });
@@ -2621,6 +3206,11 @@ window.addEventListener("hashchange", () => {
 window.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && state.workspacePanelOpen) {
     setWorkspacePanelOpen(false);
+    return;
+  }
+
+  if (event.key === "Escape" && !byId("aboutMeridianModal")?.hidden) {
+    hideAboutModal();
   }
 });
 
@@ -2726,9 +3316,9 @@ byId("upskilledCategoryStrip").addEventListener("click", async (event) => {
   }
 });
 
-byId("runHistoryList").addEventListener("click", async (event) => {
+byId("mainGrid")?.addEventListener("click", async (event) => {
   const item = event.target.closest("[data-run-id]");
-  if (!item) {
+  if (!item || !item.closest(".history-list")) {
     return;
   }
 
@@ -2745,6 +3335,139 @@ byId("jobSearchInput").addEventListener("input", () => {
 
 byId("jobFilterSelect").addEventListener("change", () => {
   renderMarketBoard();
+});
+
+byId("shortlistSortSelect")?.addEventListener("change", () => {
+  renderShortlist();
+});
+
+byId("compareRunsBtn")?.addEventListener("click", async () => {
+  try {
+    await renderRunComparePanel();
+  } catch (error) {
+    reportUiError(error);
+  }
+});
+
+byId("portalHealthBtn")?.addEventListener("click", async () => {
+  try {
+    await fetchJson("/api/portals/health-check", { method: "POST" });
+    await loadSetupStatus();
+  } catch (error) {
+    reportUiError(error);
+  }
+});
+
+byId("importBundleInput")?.addEventListener("change", async (event) => {
+  const [file] = event.target.files || [];
+  if (!file) {
+    return;
+  }
+  try {
+    const text = await file.text();
+    await fetchJson("/api/import/bundle", {
+      method: "POST",
+      body: text
+    });
+    await loadTracker();
+    await loadSetupStatus();
+  } catch (error) {
+    reportUiError(error);
+  }
+});
+
+byId("ollamaPresetBtn")?.addEventListener("click", () => {
+  applyOllamaPreset();
+});
+
+byId("dismissWizardBtn")?.addEventListener("click", async () => {
+  state.setupStatus = await fetchJson("/api/wizard/dismiss", { method: "POST" });
+  renderWizardPanel(state.setupStatus);
+});
+
+byId("confirmPortalAckBtn")?.addEventListener("click", async () => {
+  state.setupStatus = await fetchJson("/api/wizard/portal-ack", { method: "POST" });
+  hidePortalAckModal();
+  renderWizardPanel(state.setupStatus);
+  if (state.pendingPortalRun) {
+    state.pendingPortalRun = false;
+    await runWorkflow();
+  }
+});
+
+byId("cancelPortalAckBtn")?.addEventListener("click", () => {
+  state.pendingPortalRun = false;
+  hidePortalAckModal();
+});
+
+byId("closeResumeDiffBtn")?.addEventListener("click", () => {
+  byId("resumeDiffModal").hidden = true;
+});
+
+byId("shortlistGrid")?.addEventListener("change", async (event) => {
+  const select = event.target.closest(".tracker-state-input");
+  if (!select) {
+    return;
+  }
+  const jobKey = select.dataset.trackerKey;
+  const job = (state.selectedResults?.shortlist?.data || []).find((item) => jobTrackerKey(item) === jobKey);
+  try {
+    await updateTrackerJob(jobKey, {
+      state: select.value,
+      title: job?.title,
+      company: job?.company,
+      url: job?.url,
+      runId: state.selectedRunId
+    });
+    if (select.value === "rejected") {
+      const reason = window.prompt("Optional rejection reason (feeds future scoring suggestions):", "") || "";
+      if (reason) {
+        await fetchJson("/api/outcome/reject", {
+          method: "POST",
+          body: JSON.stringify({
+            jobKey,
+            reason,
+            title: job?.title,
+            company: job?.company,
+            url: job?.url,
+            runId: state.selectedRunId
+          })
+        });
+        await loadTracker();
+      }
+    }
+  } catch (error) {
+    reportUiError(error);
+  }
+});
+
+byId("shortlistGrid")?.addEventListener("click", async (event) => {
+  const button = event.target.closest(".resume-diff-btn");
+  if (!button) {
+    return;
+  }
+  try {
+    await showResumeDiffModal(button.dataset.resumePath);
+  } catch (error) {
+    reportUiError(error);
+  }
+
+  const copyBtn = event.target.closest(".copy-draft-btn");
+  if (copyBtn) {
+    const card = copyBtn.closest(".email-draft-card");
+    const body = card?.querySelector(".email-draft-body")?.textContent || "";
+    await navigator.clipboard.writeText(body);
+  }
+});
+
+byId("emailDraftsPanel")?.addEventListener("click", async (event) => {
+  const copyBtn = event.target.closest(".copy-draft-btn");
+  if (!copyBtn) {
+    return;
+  }
+  const card = copyBtn.closest(".email-draft-card");
+  const body = card?.querySelector(".email-draft-body")?.textContent || "";
+  await navigator.clipboard.writeText(body);
 });
 
 initialize().catch((error) => {

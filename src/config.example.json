@@ -77,16 +77,6 @@
     "transitionLevel": "bridge",
     "notes": "Focus on bridge roles that leverage technical depth while building customer-facing and go-to-market capability."
   },
-  "gmail": {
-    "enabled": false,
-    "credentialsPath": "credentials.json",
-    "tokenDir": "data/gmail",
-    "query": "category:promotions OR label:^smartlabel_promo",
-    "batchSize": 100,
-    "maxMessagesPerRun": 500,
-    "previewSampleSize": 20,
-    "action": "preview"
-  },
   "preferences": {
     "minimumScore": 60,
     "maxJobsPerPortal": 25,

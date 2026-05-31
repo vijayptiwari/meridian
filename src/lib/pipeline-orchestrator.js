@@ -52,7 +52,7 @@ function mergeStateFromReport(state, report) {
     case "transition-compensation-agent":
       return { ...state, transitionCompensation: report.output };
     default:
-      if (report.agent.includes("apply") || report.agent === "gmail-cleanup-agent") {
+      if (report.agent.includes("apply")) {
         const applyResults = [...(state.applyResults || []), { agent: report.agent, ...(report.output || {}) }];
         return { ...state, applyResults };
       }
@@ -60,16 +60,40 @@ function mergeStateFromReport(state, report) {
   }
 }
 
-async function runPipeline({ agents, state, services, log, parentLabel = "Parent agent" }) {
+async function runPipeline({
+  agents,
+  state,
+  services,
+  log,
+  parentLabel = "Parent agent",
+  startIndex = 0,
+  onAgentComplete = null
+}) {
   let currentState = state;
   const reports = [];
+  const safeStartIndex = Math.max(0, Math.min(startIndex, agents.length));
 
-  log.info(`${parentLabel} is building the execution plan.`);
-  for (const agent of agents) {
+  if (safeStartIndex > 0) {
+    log.info(`${parentLabel} is resuming from agent ${safeStartIndex + 1} of ${agents.length}.`);
+  } else {
+    log.info(`${parentLabel} is building the execution plan.`);
+  }
+
+  for (let index = safeStartIndex; index < agents.length; index += 1) {
+    const agent = agents[index];
     log.info(`${parentLabel} delegated work to ${agent.name}.`);
     const report = await agent.run({ state: currentState, services });
     reports.push(report);
     currentState = mergeStateFromReport(currentState, report);
+
+    if (typeof onAgentComplete === "function") {
+      await onAgentComplete({
+        agent,
+        agentIndex: index,
+        state: currentState,
+        reports
+      });
+    }
   }
 
   return { state: currentState, reports };

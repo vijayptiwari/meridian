@@ -5,7 +5,6 @@ node_modules/
 .env
 .env.local
 .env.*.local
-credentials.json
 src/config.json
 
 # Local runtime data (recreated on first run)

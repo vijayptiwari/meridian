@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Architecture — Meridian</title>
+    <meta name="description" content="Meridian agent pipeline architecture and local-first design." />
+    <link rel="icon" href="assets/brand/logo-icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/css/site.css" />
+  </head>
+  <body data-page="architecture" data-doc-page="architecture.html">
+    <div data-site-header></div>
+    <main class="doc-page">
+      <div class="doc-frame">
+        <div data-doc-sidebar></div>
+        <article class="doc-content content-wide">
+          <h1>Architecture</h1>
+          <p class="lede">
+            Meridian orchestrates specialized agents locally. The dashboard at <code>src/ui/server.js</code> starts runs and surfaces artifacts from <code>data/output/</code>.
+          </p>
+          <h2>UI server and persistence</h2>
+          <p>
+            <code>src/ui/server.js</code> spawns pipeline workers, streams logs, and writes run state under
+            <code>data/ui/</code>:
+          </p>
+          <ul>
+            <li><code>active-run.json</code> — reconnect after page refresh or server restart</li>
+            <li><code>run-history.json</code> — completed, failed, and interrupted runs</li>
+            <li><code>checkpoints/{runId}.json</code> — agent progress for resume</li>
+            <li><code>run-logs/{runId}.log</code> — stdout/stderr from each run</li>
+          </ul>
+          <p>
+            The pipeline orchestrator saves a checkpoint after each agent. Resume skips completed agents and hydrates state from the checkpoint file.
+          </p>
+          <h2>Job search pipeline</h2>
+          <ol>
+            <li><strong>Research</strong> — scrape LinkedIn/Naukri via Playwright</li>
+            <li><strong>Business research</strong> — company stability signals</li>
+            <li><strong>Salary upgrade</strong> — compensation benchmarking</li>
+            <li><strong>JD comparison</strong> — fit scoring and shortlist</li>
+            <li><strong>Resume modifier</strong> — per-role tailored resumes</li>
+            <li><strong>Learning prep</strong> — interview prep tasks</li>
+            <li><strong>Apply agents</strong> — assisted Easy Apply / email drafts</li>
+          </ol>
+          <h2>Other modes</h2>
+          <ul>
+            <li><strong>next-role</strong> — upskilling and learning paths</li>
+            <li><strong>career-transition</strong> — bridge roles and transition strategy</li>
+            <li><strong>demo</strong> — sample output without portal access</li>
+          </ul>
+          <h2>Extending Meridian</h2>
+          <p>See <a href="https://github.com/vijayptiwari/meridian/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a> for adding agents and portals.</p>
+          <p><a href="dashboard.html">Dashboard guide</a> — workspaces, settings panel, resume/replay.</p>
+        </article>
+      </div>
+    </main>
+    <div data-site-footer></div>
+    <script src="assets/js/site.js"></script>
+  </body>
+</html>

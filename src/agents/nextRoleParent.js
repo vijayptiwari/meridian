@@ -2,6 +2,7 @@ const path = require("path");
 const { saveJson, timestamp } = require("../lib/runtime");
 const { runPipeline } = require("../lib/pipeline-orchestrator");
 const { getPipelineAgents } = require("../lib/pipelines");
+const { createCheckpointPayload, hydrateStateFromCheckpoint, saveCheckpoint } = require("../lib/run-checkpoint");
 
 function summarize(state) {
   return {
@@ -13,23 +14,58 @@ function summarize(state) {
   };
 }
 
-async function runNextRoleParent({ rootDir, config, log, mode, headed, selectedPortals, browserStateDir, outputDir, services }) {
-  const state = {
-    rootDir,
-    config,
-    mode,
-    headed,
-    selectedPortals,
-    browserStateDir,
-    outputDir
+function buildCheckpointSaver({ rootDir, runId, mode, portal, headed }) {
+  const completedAgents = [];
+
+  return async ({ agent, state, reports }) => {
+    completedAgents.push(agent.name);
+    saveCheckpoint(
+      rootDir,
+      createCheckpointPayload({
+        runId,
+        mode,
+        portal,
+        headed,
+        completedAgents: [...completedAgents],
+        state,
+        reports
+      })
+    );
   };
+}
+
+async function runNextRoleParent({
+  rootDir,
+  config,
+  log,
+  mode,
+  headed,
+  selectedPortals,
+  browserStateDir,
+  outputDir,
+  services,
+  resumeFromCheckpoint = null,
+  portal = "both"
+}) {
+  const runtime = { rootDir, config, mode, headed, selectedPortals, browserStateDir, outputDir };
+  const runId = process.env.JOB_AGENT_RUN_ID || timestamp();
+  let state = { ...runtime };
+  let startIndex = 0;
+
+  if (resumeFromCheckpoint) {
+    state = hydrateStateFromCheckpoint(resumeFromCheckpoint, runtime);
+    startIndex = resumeFromCheckpoint.completedAgentCount || 0;
+    log.info(`Resuming next-role parent from checkpoint after ${startIndex} completed agents.`);
+  }
 
   const { state: currentState, reports } = await runPipeline({
     agents: getPipelineAgents("next-role"),
     state,
     services,
     log,
-    parentLabel: "Next-role parent agent"
+    parentLabel: "Next-role parent agent",
+    startIndex,
+    onAgentComplete: buildCheckpointSaver({ rootDir, runId, mode, portal, headed })
   });
 
   const stamp = timestamp();

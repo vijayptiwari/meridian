@@ -3,6 +3,7 @@ const { loadConfig } = require("./lib/config");
 const { createLogger } = require("./lib/logger");
 const { ensureDir, getPortalSelection } = require("./lib/runtime");
 const { createServices } = require("./lib/services");
+const { loadCheckpoint } = require("./lib/run-checkpoint");
 
 async function main() {
   const rootDir = process.cwd();
@@ -13,17 +14,37 @@ async function main() {
   const config = loadConfig(path.join(rootDir, "src", "config.json"));
   const headed = process.env.JOB_AGENT_HEADED === "true";
   const mode = process.env.JOB_AGENT_MODE || "search";
-  const selectedPortals =
-    mode === "gmail-cleanup" || mode === "demo" ? [] : getPortalSelection(config);
+  const portal = process.env.JOB_AGENT_PORTAL || "both";
+  const runId = process.env.JOB_AGENT_RUN_ID || null;
+  const resumeRunId = process.env.JOB_AGENT_RESUME_RUN_ID || "";
+  const resumeFromCheckpoint = resumeRunId ? loadCheckpoint(rootDir, resumeRunId) : null;
+  const selectedPortals = mode === "demo" ? [] : getPortalSelection(config);
 
   await ensureDir(browserStateDir);
   await ensureDir(outputDir);
 
-  if (!["gmail-cleanup", "demo"].includes(mode) && selectedPortals.length === 0) {
+  if (resumeRunId && !resumeFromCheckpoint) {
+    throw new Error(`No checkpoint found for run ${resumeRunId}.`);
+  }
+
+  if (mode !== "demo" && selectedPortals.length === 0) {
     throw new Error("No portals enabled in config for the requested run.");
   }
 
   const services = createServices({ rootDir, config, log, browserStateDir, headed });
+  const parentArgs = {
+    rootDir,
+    config,
+    log,
+    mode,
+    headed,
+    selectedPortals,
+    browserStateDir,
+    outputDir,
+    services,
+    portal,
+    resumeFromCheckpoint
+  };
 
   const result =
     mode === "demo"
@@ -33,56 +54,14 @@ async function main() {
           log,
           outputDir
         })
-      : mode === "gmail-cleanup"
-        ? await require("./agents/gmailCleanupAgent").runGmailCleanupAgent({
-            rootDir,
-            config,
-            log,
-            outputDir
-          })
-        : mode === "next-role"
-          ? await require("./agents/nextRoleParent").runNextRoleParent({
-              rootDir,
-              config,
-              log,
-              mode,
-              headed,
-              selectedPortals,
-              browserStateDir,
-              outputDir,
-              services
-            })
-          : mode === "career-transition"
-            ? await require("./agents/careerTransitionParent").runCareerTransitionParent({
-                rootDir,
-                config,
-                log,
-                mode,
-                headed,
-                selectedPortals,
-                browserStateDir,
-                outputDir,
-                services
-              })
-            : await require("./agents/parent").runParentAgent({
-                rootDir,
-                config,
-                log,
-                mode,
-                headed,
-                selectedPortals,
-                browserStateDir,
-                outputDir,
-                services
-              });
+      : mode === "next-role"
+        ? await require("./agents/nextRoleParent").runNextRoleParent(parentArgs)
+        : mode === "career-transition"
+          ? await require("./agents/careerTransitionParent").runCareerTransitionParent(parentArgs)
+          : await require("./agents/parent").runParentAgent(parentArgs);
 
   if (mode === "next-role") {
     log.info(`Saved next-role strategy to ${result.strategyPath}`);
-    return;
-  }
-
-  if (mode === "gmail-cleanup") {
-    log.info(`Saved Gmail cleanup report to ${result.reportPath}`);
     return;
   }
 
@@ -95,6 +74,10 @@ async function main() {
   log.info(`Saved shortlist to ${result.shortlistPath}`);
   log.info(`Saved tailored resumes to ${result.tailoredPath}`);
   log.info(`Saved agent report to ${result.reportPath}`);
+
+  if (runId) {
+    log.info(`Run ${runId} completed successfully.`);
+  }
 }
 
 main().catch((error) => {

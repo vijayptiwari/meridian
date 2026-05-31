@@ -8,13 +8,15 @@ Meridian is an open-source, local-first AI career agent. Search jobs, score fit,
 
 ## Features
 
-- Local web dashboard (`npm run ui`)
+- Local web dashboard (`npm run ui`) with **Get started** flow — upload resume, pick a goal, run analysis
+- Three workspaces: **Find jobs**, **Upskilling**, **Career transition**
+- **Settings** panel: Profile · Search & run · LLM (not a separate filters-only screen)
+- Run **persistence** — page refresh reconnects; **resume from checkpoint** or **replay** after interrupt
 - Multi-agent pipeline: research → salary → fit → resume tailoring → prep
-- Upskilling and career-transition modes
 - BYOK LLM: OpenAI-compatible APIs, Ollama, Groq, Azure, or custom webhook
 - Keyword-only fallback when no API key is configured
-- Optional Gmail cleanup (local OAuth)
 - Demo mode — try the UI without portal access
+- Docs site links back to your self-hosted dashboard ([vijayptiwari.github.io/meridian](https://vijayptiwari.github.io/meridian/))
 
 ## Quick start
 
@@ -33,9 +35,12 @@ Open **http://127.0.0.1:3030** — the dashboard loads immediately.
 
 ### First run
 
-1. Upload a resume or edit profile in **Settings**
-2. Add your LLM API key in `.env` or Settings (optional)
-3. Click **Try Demo** or run a full job search with **Headed browser** for LinkedIn login
+1. Upload a resume in **Get started** (step 1) or edit profile in **Settings**
+2. Choose **Find jobs**, **Upskill**, or **Change career** (step 2)
+3. Click **Try demo first** or **Start job search** (step 3)
+4. Optional: LLM API key in `.env` or Settings → LLM
+
+See [docs/dashboard.md](docs/dashboard.md) and the [dashboard guide](https://vijayptiwari.github.io/meridian/dashboard.html) for tabs, resume/replay, and data paths.
 
 ## Scripts
 
@@ -59,13 +64,14 @@ docker compose up --build
 
 ## Documentation
 
-- [Product site & docs hub](https://vijayptiwari.github.io/meridian/)
+- [Product site & docs hub](https://vijayptiwari.github.io/meridian/) — includes links back to your self-hosted dashboard (`http://127.0.0.1:3030` by default)
+- [Dashboard guide](https://vijayptiwari.github.io/meridian/dashboard.html) · [markdown](docs/dashboard.md)
 - [Why Meridian is different](https://vijayptiwari.github.io/meridian/compare.html)
 - [Quickstart](https://vijayptiwari.github.io/meridian/getting-started.html) · [markdown](docs/quickstart.md)
 - [Configuration](https://vijayptiwari.github.io/meridian/configuration.html) · [markdown](docs/configuration.md)
 - [LLM providers](https://vijayptiwari.github.io/meridian/llm-providers.html) · [markdown](docs/llm-providers.md)
 - [Portals](https://vijayptiwari.github.io/meridian/portals.html) · [markdown](docs/portals.md)
-- [Gmail cleanup](https://vijayptiwari.github.io/meridian/gmail-cleanup.html) · [markdown](docs/gmail-cleanup.md)
+- [Roadmap](https://vijayptiwari.github.io/meridian/roadmap.html) · [markdown](docs/ROADMAP.md)
 
 ## Disclaimer
 

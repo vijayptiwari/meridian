@@ -26,18 +26,22 @@
         <div class="site-shell site-shell--wide hero__grid">
           <div>
             <span class="eyebrow">Open source · Local-first</span>
-            <h1>Career operations you control. Data that stays with you.</h1>
+            <h1>Local career ops for serious job seekers</h1>
             <p class="hero__lead">
-              Meridian helps professionals research roles, evaluate fit, tailor resumes, and prepare for interviews —
-              as a structured workflow on your own machine. No subscription. No cloud upload of your resume.
+              Research roles, score fit, tailor resumes, and track applications — as a structured workflow on your own machine. No subscription. No cloud upload of your resume.
             </p>
             <div class="hero__actions">
               <a class="btn btn--primary" href="getting-started.html">Get started</a>
+              <a class="btn btn--secondary" href="dashboard.html">Dashboard guide</a>
               <a class="btn btn--secondary" href="compare.html">Compare solutions</a>
               <a class="btn btn--ghost" href="https://github.com/vijayptiwari/meridian" target="_blank" rel="noopener"
                 >View source</a
               >
             </div>
+            <p class="hero__social">
+              <img src="https://img.shields.io/github/stars/vijayptiwari/meridian?style=flat&logo=github" alt="GitHub stars" />
+              <a href="https://github.com/vijayptiwari/meridian" target="_blank" rel="noopener">Star on GitHub</a>
+            </p>
             <div class="hero__stats">
               <div class="stat-card">
                 <strong>$0</strong>
@@ -54,48 +58,38 @@
             </div>
           </div>
 
-          <div class="hero-panel">
+          <div class="hero-panel hero-panel--product">
             <div class="hero-panel__chrome">
               <span class="hero-panel__dot"></span>
               <span class="hero-panel__dot"></span>
               <span class="hero-panel__dot"></span>
-              <span class="hero-panel__url">127.0.0.1:3030</span>
+              <a
+                class="hero-panel__url"
+                data-dashboard-open
+                href="http://127.0.0.1:3030"
+                target="_blank"
+                rel="noopener noreferrer"
+                >127.0.0.1:3030 · Dashboard</a
+              >
             </div>
-            <div class="hero-panel__body">
-              <div class="hero-panel__header">
-                <div class="hero-panel__title">Workflow pipeline</div>
-                <span class="status-pill">Running locally</span>
-              </div>
-              <div class="pipeline">
-                <div class="pipeline-step">
-                  <span class="pipeline-step__dot"></span>
-                  <div><strong>Job research</strong></div>
-                  <span>LinkedIn · Naukri</span>
+            <div class="hero-panel__body hero-panel__body--screenshot">
+              <div class="product-shot">
+                <div class="product-shot__sidebar">
+                  <strong>Meridian</strong>
+                  <span>Eligible Jobs</span>
+                  <span>Upskilling</span>
+                  <span>Career Transition</span>
                 </div>
-                <div class="pipeline-step">
-                  <span class="pipeline-step__dot"></span>
-                  <div><strong>Compensation analysis</strong></div>
-                  <span>Salary filters</span>
-                </div>
-                <div class="pipeline-step">
-                  <span class="pipeline-step__dot"></span>
-                  <div><strong>Role fit scoring</strong></div>
-                  <span>JD comparison</span>
-                </div>
-                <div class="pipeline-step">
-                  <span class="pipeline-step__dot"></span>
-                  <div><strong>Resume tailoring</strong></div>
-                  <span>Per-role output</span>
-                </div>
-                <div class="pipeline-step">
-                  <span class="pipeline-step__dot"></span>
-                  <div><strong>Interview preparation</strong></div>
-                  <span>Learning plans</span>
-                </div>
-                <div class="pipeline-step">
-                  <span class="pipeline-step__dot"></span>
-                  <div><strong>Assisted applications</strong></div>
-                  <span>Human review</span>
+                <div class="product-shot__main">
+                  <div class="product-shot__row"><span>Fit 82</span><span>Overall bet 78</span><span>Easy Apply</span></div>
+                  <div class="product-shot__card">
+                    <strong>Senior Backend Engineer</strong>
+                    <p>Matched: Java, microservices, REST · Stability: strong</p>
+                  </div>
+                  <div class="product-shot__card">
+                    <strong>Solution Architect</strong>
+                    <p>Matched: architecture, cloud · Tracker: Applied</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -124,6 +118,8 @@
         </div>
       </section>
 
+      <div data-dashboard-callout></div>
+
       <section class="section">
         <div class="site-shell site-shell--wide">
           <div class="section__header section__header--center section__header--wide">
@@ -144,14 +140,21 @@
             </article>
             <article class="feature-card">
               <div class="feature-card__icon">02</div>
-              <h3>Local dashboard</h3>
+              <h3>Get started in three steps</h3>
               <p>
-                A full web interface at <code>127.0.0.1:3030</code> to manage runs, review shortlists, export data, and
-                configure settings.
+                Upload a resume, choose Find jobs / Upskill / Change career, and start analysis from one screen — with
+                <a href="dashboard.html">Settings</a> for profile, portals, and LLM when you need them.
               </p>
             </article>
             <article class="feature-card">
               <div class="feature-card__icon">03</div>
+              <h3>Runs that survive refresh</h3>
+              <p>
+                Page refresh reconnects to live runs. Checkpoints let you resume after an interrupt or replay a finished run with the same settings.
+              </p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-card__icon">04</div>
               <h3>Provider-neutral AI</h3>
               <p>
                 Connect OpenAI, Azure, Groq, or a local Ollama instance. Switch providers without migrating your data or
@@ -159,7 +162,7 @@
               </p>
             </article>
             <article class="feature-card">
-              <div class="feature-card__icon">04</div>
+              <div class="feature-card__icon">05</div>
               <h3>Controlled automation</h3>
               <p>
                 Browser automation runs locally with human oversight. You review every submission before it leaves your
@@ -167,7 +170,7 @@
               </p>
             </article>
             <article class="feature-card">
-              <div class="feature-card__icon">05</div>
+              <div class="feature-card__icon">06</div>
               <h3>Career planning modes</h3>
               <p>
                 Beyond active search — plan role transitions, identify skill gaps, and build structured upskilling
@@ -175,7 +178,7 @@
               </p>
             </article>
             <article class="feature-card">
-              <div class="feature-card__icon">06</div>
+              <div class="feature-card__icon">07</div>
               <h3>Demo before deploy</h3>
               <p>
                 Evaluate the full interface with sample data before connecting job portals or API credentials.
@@ -203,7 +206,6 @@
               <li>Per-role resume drafts with export to local files</li>
               <li>CSV export and structured JSON run artifacts</li>
               <li>Health checks via <code>npm run doctor</code></li>
-              <li>Optional Gmail cleanup with local OAuth</li>
             </ul>
           </div>
         </div>
@@ -237,6 +239,8 @@
           </p>
         </div>
       </section>
+
+      <div data-dashboard-callout></div>
 
       <section class="section section--tight">
         <div class="site-shell site-shell--wide cta-band">

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 168 40" fill="none" role="img" aria-labelledby="title desc">
+  <title>Meridian</title>
+  <desc>Meridian wordmark</desc>
+  <text
+    x="0"
+    y="30"
+    fill="#0F1724"
+    font-family="Inter, Segoe UI, system-ui, sans-serif"
+    font-size="28"
+    font-weight="650"
+    letter-spacing="-0.04em"
+  >
+    Meridian
+  </text>
+  <rect x="0" y="36" width="52" height="2.5" rx="1.25" fill="#C9A962" />
+</svg>

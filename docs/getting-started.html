@@ -19,8 +19,10 @@
           <h1>Quickstart</h1>
           <p class="lede">
             Meridian runs entirely on your machine. Clone the repository, copy the config templates, install
-            dependencies, and open the dashboard at <code>http://127.0.0.1:3030</code>.
+            dependencies, and open the dashboard at <code data-dashboard-url-inline>http://127.0.0.1:3030</code>.
           </p>
+
+          <div data-dashboard-callout></div>
 
           <h2>Prerequisites</h2>
           <ul>
@@ -31,6 +33,14 @@
           </ul>
 
           <h2>1. Clone and configure</h2>
+          <p>Fastest path: run the init script (copies config, installs deps, runs doctor).</p>
+          <div class="code-block">
+            <button type="button" data-copy-code>Copy</button>
+            <pre><code>git clone https://github.com/vijayptiwari/meridian.git
+cd meridian
+npm run init</code></pre>
+          </div>
+          <p>Or configure manually:</p>
           <div class="code-block">
             <button type="button" data-copy-code>Copy</button>
             <pre><code>git clone https://github.com/vijayptiwari/meridian.git
@@ -38,6 +48,9 @@ cd meridian
 cp src/config.example.json src/config.json
 cp .env.example .env</code></pre>
           </div>
+
+          <h2>Video walkthrough</h2>
+          <p>Record or embed a 3–5 minute install + demo run here. Suggested flow: <code>npm run init</code> → <code>npm run ui</code> → Try Demo.</p>
 
           <h2>2. Install dependencies</h2>
           <div class="code-block">
@@ -56,14 +69,22 @@ npm run doctor</code></pre>
             <button type="button" data-copy-code>Copy</button>
             <pre><code>npm run ui</code></pre>
           </div>
-          <p>Open <strong>http://127.0.0.1:3030</strong> in your browser. No login screen — the dashboard loads immediately.</p>
+          <p>
+            Open
+            <a data-dashboard-open href="http://127.0.0.1:3030" target="_blank" rel="noopener noreferrer"
+              ><strong data-dashboard-url-inline>http://127.0.0.1:3030</strong></a
+            >
+            in your browser. No login screen — the dashboard loads immediately.
+          </p>
 
-          <h2>4. Set up your profile</h2>
+          <h2>4. First run in the dashboard</h2>
           <ol>
-            <li>Open <strong>Settings</strong> in the sidebar</li>
-            <li>Enter your name, skills, target titles, and search queries</li>
-            <li>Or upload a resume on the intake panel — Meridian extracts text locally</li>
+            <li><strong>Upload resume</strong> in the Get started section (step 1) — or fill profile in <strong>Settings</strong></li>
+            <li><strong>Choose your goal</strong> — Find jobs, Upskill, or Change career (step 2)</li>
+            <li>Click <strong>Try demo first</strong> to preview output without portals, or <strong>Start job search</strong> for a real run</li>
+            <li>Enable <strong>Headed browser</strong> in Settings → Search &amp; run when LinkedIn or Naukri login is required</li>
           </ol>
+          <p>See the full <a href="dashboard.html">Dashboard guide</a> for tabs, run history, resume/replay, and data paths.</p>
 
           <h2>5. Configure LLM (optional)</h2>
           <p>Add to <code>.env</code>:</p>
@@ -84,11 +105,11 @@ OPENAI_MODEL=llama3.1</code></pre>
 
           <h2>6. Run your first pipeline</h2>
           <ul>
-            <li><strong>Try Demo</strong> — generates sample jobs and shortlist output without portal access</li>
+            <li><strong>Try demo first</strong> — sample jobs and shortlist without portal access</li>
             <li>
-              <strong>Run Jobs Dashboard</strong> — full pipeline; enable <strong>Headed browser</strong> on first run
-              to log into LinkedIn or Naukri manually
+              <strong>Start job search</strong> (or upskilling / transition) — full pipeline from the Get started section
             </li>
+            <li>Refresh the page during a run — progress stays connected; after a server restart, use <strong>Resume from checkpoint</strong> if shown</li>
           </ul>
 
           <h2>CLI alternatives</h2>
@@ -112,9 +133,10 @@ npm run demo</code></pre>
           <h2>Outputs</h2>
           <p>Results are saved under <code>data/output/</code>:</p>
           <ul>
-            <li><code>jobs-*.json</code>, <code>shortlist-*.json</code>, <code>agent-report-*.json</code></li>
+            <li><code>jobs-{runId}.json</code>, <code>shortlist-{runId}.json</code>, <code>agent-report-{runId}.json</code></li>
             <li>Tailored resumes in <code>data/output/tailored-resumes/</code></li>
-            <li>CSV export from the dashboard for any run with a shortlist</li>
+            <li>Run logs in <code>data/ui/run-logs/</code>; checkpoints in <code>data/ui/checkpoints/</code></li>
+            <li>CSV export from the Runs tab for any run with a shortlist</li>
           </ul>
 
           <h2>Docker (optional)</h2>

@@ -37,17 +37,6 @@ function loadConfig(configPath) {
     notes: "",
     ...(config.transition || {})
   };
-  config.gmail = {
-    enabled: false,
-    credentialsPath: "credentials.json",
-    tokenDir: "data/gmail",
-    query: "category:promotions OR label:^smartlabel_promo",
-    batchSize: 100,
-    maxMessagesPerRun: 500,
-    previewSampleSize: 20,
-    action: "preview",
-    ...(config.gmail || {})
-  };
 
   if (!Array.isArray(config.transition.targetRoles)) {
     config.transition.targetRoles = [];
@@ -60,16 +49,6 @@ function loadConfig(configPath) {
   config.profile.upskilledCategories = Array.isArray(config.profile.upskilledCategories)
     ? config.profile.upskilledCategories
     : [];
-
-  config.gmail.batchSize = Number.isInteger(config.gmail.batchSize)
-    ? Math.min(Math.max(config.gmail.batchSize, 1), 100)
-    : 100;
-  config.gmail.maxMessagesPerRun = Number.isInteger(config.gmail.maxMessagesPerRun)
-    ? Math.max(config.gmail.maxMessagesPerRun, 1)
-    : 500;
-  config.gmail.previewSampleSize = Number.isInteger(config.gmail.previewSampleSize)
-    ? Math.max(config.gmail.previewSampleSize, 1)
-    : 20;
 
   config.llm = {
     provider: "openai-compatible",

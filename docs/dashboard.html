@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard guide — Meridian</title>
+    <meta
+      name="description"
+      content="How to use the Meridian local dashboard — get started flow, workspaces, runs, resume/replay, and settings."
+    />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" href="assets/brand/logo-icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/css/site.css" />
+  </head>
+  <body data-page="dashboard" data-doc-page="dashboard.html">
+    <div data-site-header></div>
+
+    <main class="doc-page">
+      <div class="doc-frame">
+        <div data-doc-sidebar></div>
+        <article class="doc-content content-wide">
+          <h1>Dashboard guide</h1>
+          <p class="lede">
+            After <code>npm run ui</code>, Meridian opens at
+            <a data-dashboard-open href="http://127.0.0.1:3030" target="_blank" rel="noopener noreferrer"
+              ><code data-dashboard-url-inline>http://127.0.0.1:3030</code></a
+            >. This page explains the current UI, workspaces, run persistence, and settings.
+          </p>
+
+          <div data-dashboard-callout></div>
+
+          <h2>Get started (first screen)</h2>
+          <p>The top of the dashboard is a three-step flow — no separate setup tab required:</p>
+          <ol>
+            <li><strong>Upload resume</strong> — PDF, DOCX, TXT, or MD. Parsed locally to fill your profile and search queries.</li>
+            <li>
+              <strong>Choose your goal</strong> — <em>Find jobs</em>, <em>Upskill</em>, or <em>Change career</em>. This switches the workspace below.
+            </li>
+            <li>
+              <strong>Start analysis</strong> — <em>Start job search</em> (label changes per goal), <em>Try demo first</em>, or <em>Open settings</em> for portals, salary guardrails, and LLM.
+            </li>
+          </ol>
+          <p>
+            Click the <strong>Meridian</strong> logo anytime for product info, documentation links, and contact email.
+          </p>
+
+          <h2>Settings panel</h2>
+          <p>Open <strong>Settings</strong> from the header or step 3. It is one panel with three sections — not just filters:</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Section</th>
+                <th>What you configure</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Profile</strong></td>
+                <td>Name, title, skills, target titles, search queries, resume summary, avoid keywords</td>
+              </tr>
+              <tr>
+                <td><strong>Search &amp; run</strong></td>
+                <td>Portal (LinkedIn / Naukri / both), run mode, headed browser, location, salary floors, transition fields</td>
+              </tr>
+              <tr>
+                <td><strong>LLM</strong></td>
+                <td>Provider, model, API key, webhook, keyword-only mode, test connection</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>Click <strong>Save</strong> in the panel header. Values are stored in <code>src/config.json</code> on your machine.</p>
+
+          <h2>Workspaces</h2>
+          <p>Three career modes share run history but show different tabs and outputs:</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Goal</th>
+                <th>Pipeline mode</th>
+                <th>Main tabs</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Find jobs</strong></td>
+                <td><code>search</code>, <code>assist-apply</code>, <code>demo</code></td>
+                <td>Results · Runs · Jobs · Tracker</td>
+              </tr>
+              <tr>
+                <td><strong>Upskill</strong></td>
+                <td><code>next-role</code></td>
+                <td>Overview · Runs · Learning</td>
+              </tr>
+              <tr>
+                <td><strong>Change career</strong></td>
+                <td><code>career-transition</code></td>
+                <td>Overview · Runs · Plan</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Jobs workspace tabs</h3>
+          <ul>
+            <li><strong>Results</strong> — live pipeline progress, run summary, and selected run metrics</li>
+            <li><strong>Runs</strong> — history, run detail, exports, compare two runs, backup/restore bundle</li>
+            <li><strong>Jobs</strong> — shortlist and market board for the selected run</li>
+            <li><strong>Tracker</strong> — application status and email apply drafts</li>
+          </ul>
+
+          <h2>Runs: start, refresh, resume, replay</h2>
+          <p>Meridian persists run state on disk so work is not lost casually:</p>
+          <ul>
+            <li><strong>Page refresh</strong> — the agent keeps running; the UI reconnects and shows live progress.</li>
+            <li>
+              <strong>UI server restart</strong> — if the worker is still alive, the server reattaches and tails the log. If the worker stopped mid-run, the run is marked <em>interrupted</em> when a checkpoint exists.
+            </li>
+            <li><strong>Resume from checkpoint</strong> — on an interrupted run, use <em>Resume from checkpoint</em> to continue from the last completed agent (same run id).</li>
+            <li><strong>Replay run</strong> — on completed or failed runs, replay with the same mode, portal, and settings as a new run.</li>
+          </ul>
+          <p>Checkpoints are saved after each pipeline agent to <code>data/ui/checkpoints/{runId}.json</code>.</p>
+
+          <h2>Local data paths</h2>
+          <ul>
+            <li><code>data/output/</code> — jobs, shortlists, tailored resumes, agent reports, strategy JSON</li>
+            <li><code>data/ui/run-history.json</code> — run metadata and summaries</li>
+            <li><code>data/ui/run-logs/{runId}.log</code> — per-run logs</li>
+            <li><code>data/ui/active-run.json</code> — in-progress run snapshot for reconnect</li>
+            <li><code>data/ui/checkpoints/</code> — resume checkpoints per run</li>
+            <li><code>data/browser-state/</code> — LinkedIn/Naukri login sessions</li>
+          </ul>
+
+          <h2>Documentation ↔ dashboard</h2>
+          <p>
+            This docs site links back to your self-hosted dashboard (header, footer, sidebar). Custom host or port:
+            <code>?dashboard=https://your-host:3030</code> on any docs URL — see
+            <a href="configuration.html">Configuration</a>.
+          </p>
+
+          <p>
+            <a class="btn btn--primary" href="getting-started.html">Quickstart</a>
+            <a class="btn btn--secondary" href="troubleshooting.html">Troubleshooting</a>
+          </p>
+        </article>
+      </div>
+    </main>
+
+    <div data-site-footer></div>
+    <script src="assets/js/site.js"></script>
+  </body>
+</html>

@@ -8,763 +8,682 @@
       name="description"
       content="Meridian — open-source local-first career operations agent. Search jobs, score fit, tailor resumes, and assist with applications. Your data stays on your machine."
     />
-    <link rel="icon" href="/brand/logo-icon.svg" type="image/svg+xml" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2048%2048'%20fill%3D'none'%3E%3Crect%20width%3D'48'%20height%3D'48'%20rx%3D'11'%20fill%3D'%230F2744'/%3E%3Cpath%20fill%3D'%23FFFFFF'%20d%3D'M11%2037V23.4L17.2%2030.2%2023.4%2016.8%2029.6%2030.2%2035.8%2023.4V37H11Z'/%3E%3Ccircle%20cx%3D'23.4'%20cy%3D'12.8'%20r%3D'3.1'%20fill%3D'%23D4BC82'/%3E%3C%2Fsvg%3E"
+      type="image/svg+xml"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
     <div class="page-shell">
-      <aside class="sidebar">
-        <div class="brand-block">
-          <img src="/brand/logo-mark.svg" alt="" class="brand-mark" width="40" height="40" />
-          <p class="eyebrow">Local Career Agent</p>
-          <h1>Meridian</h1>
-          <p class="subtle">
-            Align your next move. Run locally — no account, no cloud. Upload a resume, configure your LLM, and run specialized agents for jobs, upskilling, and career transitions.
+      <header class="app-header">
+        <div class="app-header__brand">
+          <button id="openAboutModalBtn" class="app-brand-lockup" type="button" aria-label="About Meridian">
+            <svg class="app-logo-mark" width="32" height="32" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+              <path
+                fill="#0F2744"
+                d="M10 38V22.2L17.4 30.1 23.8 14.6 30.2 30.1 37.6 22.2V38H10Z"
+              />
+              <circle cx="23.8" cy="10.2" r="3.6" fill="#C9A962" />
+            </svg>
+            <span class="app-logo-word">Meridian</span>
+          </button>
+        </div>
+        <div class="app-header__status">
+          <span id="runBadge" class="status-pill idle">Idle</span>
+          <p id="runMeta" class="subtle">No run in progress.</p>
+        </div>
+        <div class="app-header__actions">
+          <button id="openWorkspacePanelBtn" class="button ghost" type="button">Settings</button>
+        </div>
+      </header>
+
+      <section id="getStartedHero" class="get-started-hero card">
+        <div class="get-started-hero__intro">
+          <p class="section-label">Get started</p>
+          <h2 id="getStartedTitle">Run your career analysis locally</h2>
+          <p id="getStartedLead" class="hero-support">
+            Upload your resume, choose what you want Meridian to do, then start the run. Everything stays on your machine.
           </p>
         </div>
 
-        <nav class="sidebar-card nav-card" aria-label="Dashboard sections">
-          <p class="section-label">Control Surface</p>
-          <a href="#intakeSection" class="nav-link">Resume Intake</a>
-          <a href="#pipelineSection" class="nav-link">Pipeline</a>
-          <button id="openWorkspaceNavBtn" class="nav-link nav-link-button" type="button">Settings</button>
-          <button id="openGmailSetupBtn" class="nav-link nav-link-button" type="button">Gmail Setup</button>
-          <a href="#resultsSection" class="nav-link">Dashboard View</a>
-          <a href="#logsSection" class="nav-link">Backend Trace</a>
-        </nav>
-
-        <div class="sidebar-card">
-          <p class="section-label">Agent Flow</p>
-          <ol class="loop-list">
-            <li>Parse resume or profile input</li>
-            <li>Research openings and companies</li>
-            <li>Analyze fit, salary, and upside</li>
-            <li>Generate learning paths and prep tasks</li>
-            <li>Track outcomes in run history</li>
-          </ol>
-        </div>
-
-        <div class="sidebar-card status-card">
-          <div class="status-heading">
-            <p class="section-label">Run Status</p>
-            <span id="runBadge" class="status-pill idle">Idle</span>
-          </div>
-          <p id="runMeta" class="subtle">No run in progress.</p>
-        </div>
-      </aside>
-
-      <main class="main-grid">
-        <section class="hero-panel">
-          <div class="hero-copy">
-            <p class="eyebrow">Local-first · No login</p>
-            <h2>One workspace for jobs, growth, and career transitions.</h2>
-            <p id="dashboardDescription" class="hero-support">
-              Explore eligible opportunities, then switch to a dedicated upskilling workspace for skill gaps, learning paths, and course recommendations.
-            </p>
-            <div class="hero-signal-list" aria-label="Platform capabilities">
-              <span class="hero-signal">Resume intake</span>
-              <span class="hero-signal">Pipeline runs</span>
-              <span class="hero-signal">Run history</span>
-              <span class="hero-signal">Skill intelligence</span>
-              <span class="hero-signal">Gmail cleanup</span>
-            </div>
-          </div>
-          <div class="hero-actions">
-            <button id="openWorkspacePanelBtn" class="button secondary" type="button">Settings</button>
-            <button id="runDemoBtn" class="button secondary" type="button">Try Demo</button>
-            <button id="runSearchBtn" class="button primary" type="button">Run Jobs Dashboard</button>
-          </div>
-        </section>
-
-        <section class="card setup-checklist-card" id="setupChecklistSection">
-          <div class="card-head">
-            <div>
-              <p class="section-label">Setup Checklist</p>
-              <h3>First run readiness</h3>
-            </div>
-          </div>
-          <ul id="setupChecklist" class="setup-checklist">
-            <li data-key="config">Profile configured</li>
-            <li data-key="resume">Resume on disk</li>
-            <li data-key="llm">LLM configured (optional)</li>
-            <li data-key="filters">Search filters set</li>
-          </ul>
-        </section>
-
-        <section class="card dashboard-switch-card">
-          <div class="card-head">
-            <div>
-              <p class="section-label">Dashboard Split</p>
-              <h3 id="dashboardTitle">Eligible Jobs Dashboard</h3>
-            </div>
-            <p class="subtle">Switch focus without losing the shared intake, run history, and pipeline controls.</p>
-          </div>
-          <div class="dashboard-switcher">
-            <a id="jobsDashboardBtn" class="dashboard-tab active" href="#jobs">Eligible Jobs</a>
-            <a id="upskillDashboardBtn" class="dashboard-tab" href="#upskilling">Upskilling</a>
-            <a id="transitionDashboardBtn" class="dashboard-tab" href="#transition">Career Transition</a>
-            <a id="gmailDashboardBtn" class="dashboard-tab" href="#gmail">Gmail Cleanup</a>
-          </div>
-        </section>
-
-        <section class="card setup-dock-card">
-          <div class="card-head">
-            <div>
-              <p class="section-label">Filters and Guardrails</p>
-              <h3>Run Configuration</h3>
-            </div>
-            <button id="openWorkspacePanelInlineBtn" class="button tertiary" type="button">Open Side Panel</button>
-          </div>
-          <p class="subtle">Keep the dashboard focused on execution and results. Open the side panel whenever you want to tune search filters, guardrails, salary constraints, transition inputs, or Gmail cleanup settings.</p>
-          <div id="setupSummaryStrip" class="setup-summary-strip">
-            <p class="empty-state">Current run filters will appear here after config loads.</p>
-          </div>
-        </section>
-
-        <section id="intakeSection" class="workspace-grid">
-          <section class="card intake-card">
-            <div class="card-head">
+        <div class="get-started-grid">
+          <article class="get-started-step" data-step="resume">
+            <div class="get-started-step__head">
+              <span class="get-started-step__number">1</span>
               <div>
-                <p class="section-label">Resume Intake</p>
-                <h3>Upload and Autofill</h3>
+                <h3>Upload resume</h3>
+                <p class="subtle">PDF, DOCX, TXT, or MD. Parsed locally to fill your profile.</p>
               </div>
-              <p class="subtle">Resume parsing happens locally and fills the profile form so a new user can get started faster.</p>
             </div>
-
-            <div class="upload-panel">
+            <div class="upload-panel upload-panel--hero">
               <input id="resumeFileInput" type="file" accept=".pdf,.docx,.txt,.md" hidden />
-              <button id="resumeUploadBtn" class="button primary" type="button">Upload Resume</button>
-              <p id="resumeParseMeta" class="subtle">No resume uploaded yet. Supported formats: PDF, DOCX, TXT, MD.</p>
+              <button id="resumeUploadBtn" class="button primary" type="button">Upload resume</button>
+              <p id="resumeParseMeta" class="subtle">No resume uploaded yet.</p>
             </div>
-
             <div id="resumeDetected" class="detected-row"></div>
-            <pre id="resumePreview" class="resume-preview">Resume preview will appear here after parsing.</pre>
-          </section>
+            <details class="resume-preview-details">
+              <summary>Preview parsed text</summary>
+              <pre id="resumePreview" class="resume-preview">Resume preview will appear here after parsing.</pre>
+            </details>
+          </article>
 
-          <section id="pipelineSection" class="card pipeline-card">
-            <div class="card-head">
+          <article class="get-started-step" data-step="goal">
+            <div class="get-started-step__head">
+              <span class="get-started-step__number">2</span>
               <div>
-                <p class="section-label">Execution Pipeline</p>
-                <h3>State Timeline</h3>
+                <h3>Choose your goal</h3>
+                <p class="subtle">Pick the kind of analysis you want to run.</p>
               </div>
-              <p id="pipelineMeta" class="subtle">No active run. Start a workflow or select a historical run to inspect state transitions and stage summaries.</p>
             </div>
-            <div id="pipelineBoard" class="pipeline-board">
-              <p class="empty-state">Pipeline stages will appear here.</p>
+            <div class="goal-cards" role="tablist" aria-label="Analysis goal">
+              <button type="button" id="jobsDashboardBtn" class="goal-card active" data-goal="jobs">
+                <strong>Find jobs</strong>
+                <span>Search roles, score fit, tailor resumes, and prep applications.</span>
+              </button>
+              <button type="button" id="upskillDashboardBtn" class="goal-card" data-goal="upskilling">
+                <strong>Upskill</strong>
+                <span>Identify skill gaps and build a learning plan for your next role.</span>
+              </button>
+              <button type="button" id="transitionDashboardBtn" class="goal-card" data-goal="transition">
+                <strong>Change career</strong>
+                <span>Map bridge roles and a transition path into a new domain.</span>
+              </button>
             </div>
-          </section>
-        </section>
+          </article>
 
-        <div id="workspacePanelBackdrop" class="workspace-panel-backdrop"></div>
-        <aside id="workspaceSection" class="workspace-panel" aria-hidden="true">
-          <div class="workspace-panel-shell">
-            <div class="workspace-panel-head">
+          <article class="get-started-step" data-step="run">
+            <div class="get-started-step__head">
+              <span class="get-started-step__number">3</span>
               <div>
-                <p class="section-label">Side Panel</p>
-                <h3>Filters, Guardrails, and Agent Setup</h3>
-              </div>
-              <div class="workspace-panel-head-actions">
-                <button id="saveConfigBtn" class="button tertiary" type="button">Save Preferences</button>
-                <button id="closeWorkspacePanelBtn" class="button ghost" type="button">Close</button>
+                <h3>Start analysis</h3>
+                <p id="runIntentCopy" class="subtle">Search eligible jobs on LinkedIn and Naukri using your profile.</p>
               </div>
             </div>
-
-            <div id="workspacePanelBody" class="workspace-panel-body">
-              <section id="profileSetupBlock" class="card form-card drawer-card">
-            <div class="card-head">
-              <div>
-                <p class="section-label">Profile</p>
-                <h3>User Inputs</h3>
-              </div>
-              <p class="subtle">Review the autofilled details or edit manually before running the agents.</p>
+            <div id="setupSummaryStrip" class="setup-summary-strip setup-summary-strip--hero">
+              <p class="empty-state">Your active search preferences appear here. Open Settings to adjust portals, salary, and run mode.</p>
             </div>
+            <div class="get-started-actions">
+              <button id="runSearchBtn" class="button primary" type="button">Start job search</button>
+              <button id="runDemoBtn" class="button secondary" type="button">Try demo first</button>
+              <button id="openWorkspacePanelInlineBtn" class="button tertiary" type="button">Open settings</button>
+            </div>
+          </article>
+        </div>
+      </section>
 
+      <div id="recoverableRunBanner" class="recoverable-run-banner" hidden></div>
+
+      <main id="mainGrid" class="main-grid">
+
+        <div id="jobsDashboardGroup" class="dashboard-group">
+          <nav id="jobsTabBar" class="workspace-tabs" role="tablist" aria-label="Jobs workspace">
+            <button type="button" class="workspace-tab active" data-jobs-tab="overview" role="tab" aria-selected="true">Results</button>
+            <button type="button" class="workspace-tab" data-jobs-tab="runs" role="tab" aria-selected="false">Runs</button>
+            <button type="button" class="workspace-tab" data-jobs-tab="jobs" role="tab" aria-selected="false">Jobs</button>
+            <button type="button" class="workspace-tab" data-jobs-tab="tracker" role="tab" aria-selected="false">Tracker</button>
+          </nav>
+
+          <div id="jobsTabOverview" class="tab-panel active" data-jobs-panel="overview" role="tabpanel">
+            <section class="workspace-context card">
+              <div class="card-head card-head--compact">
+                <div>
+                  <p class="section-label">Jobs workspace</p>
+                  <h3 id="dashboardTitle">Find jobs</h3>
+                  <p id="dashboardDescription" class="subtle">Live run progress and outputs appear below after you start an analysis.</p>
+                </div>
+              </div>
+            </section>
+
+            <section class="insight-strip" id="insightStripSection" hidden>
+              <section class="card setup-checklist-card" id="setupChecklistSection">
+                <div class="card-head card-head--compact">
+                  <div>
+                    <p class="section-label">Readiness</p>
+                    <h3>Setup checklist</h3>
+                  </div>
+                </div>
+                <ul id="setupChecklist" class="setup-checklist setup-checklist--compact">
+                  <li data-key="config">Profile configured</li>
+                  <li data-key="resume">Resume on disk</li>
+                  <li data-key="demo">Demo run completed</li>
+                  <li data-key="llm">LLM configured (optional)</li>
+                  <li data-key="filters">Search filters set</li>
+                  <li data-key="portals">Portal health checked (optional)</li>
+                </ul>
+              </section>
+
+              <section class="card wizard-card" id="wizardSection" hidden>
+                <div class="card-head card-head--compact">
+                  <div>
+                    <p class="section-label">Onboarding</p>
+                    <h3 id="wizardTitle">First run wizard</h3>
+                  </div>
+                  <button id="dismissWizardBtn" class="button ghost" type="button">Dismiss</button>
+                </div>
+                <p id="wizardLead" class="subtle">Complete these steps to unlock portal runs.</p>
+                <ol id="wizardSteps" class="wizard-steps"></ol>
+                <div id="wizardActions" class="wizard-actions"></div>
+              </section>
+
+              <section class="card weekly-summary-card" id="weeklySummarySection">
+                <div class="card-head card-head--compact">
+                  <div>
+                    <p class="section-label">This week</p>
+                    <h3>Search activity</h3>
+                  </div>
+                </div>
+                <div id="weeklySummaryStrip" class="summary-strip summary-strip--compact">
+                  <p class="empty-state">Weekly summary will appear after your first runs.</p>
+                </div>
+              </section>
+            </section>
+
+            <section id="resultsSection" class="card selection-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">Active run</p>
+                  <h3 id="selectedRunHeading">Selected Run</h3>
+                </div>
+                <button id="clearSelectionBtn" class="button tertiary" type="button">Clear</button>
+              </div>
+              <p id="selectedRunMeta" class="subtle">Select a run from the Runs tab to load stats and job results.</p>
+            </section>
+
+            <section id="searchSection" class="card result-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">Run stats</p>
+                  <h3>Jobs snapshot</h3>
+                </div>
+              </div>
+              <div id="summaryStrip" class="summary-strip">
+                <p class="empty-state">Select a run to load summary metrics.</p>
+              </div>
+              <div id="shortlistCriteriaStrip" class="shortlist-criteria-strip">
+                <p class="empty-state">Shortlist criteria appear here for the selected run.</p>
+              </div>
+            </section>
+
+            <section id="pipelineSection" class="card pipeline-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">Progress</p>
+                  <h3>Pipeline</h3>
+                </div>
+                <p id="pipelineMeta" class="subtle">Start an analysis above or select a run from the Runs tab to see progress.</p>
+              </div>
+              <div id="pipelineBoard" class="pipeline-board">
+                <p class="empty-state">Pipeline stages will appear here during a run.</p>
+              </div>
+            </section>
+          </div>
+
+          <div id="jobsTabRuns" class="tab-panel" data-jobs-panel="runs" role="tabpanel" hidden>
+            <section class="card history-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">History</p>
+                  <h3 id="historyTitle">Eligible Job Runs</h3>
+                </div>
+                <button id="refreshHistoryBtn" class="button tertiary" type="button">Refresh</button>
+              </div>
+              <p class="subtle">Each run shows when it ran, portal, mode, and outcome. Select one to load its report and jobs.</p>
+              <div id="runHistoryList" class="history-list">
+                <p class="empty-state">No runs yet.</p>
+              </div>
+            </section>
+
+            <section class="card run-detail-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">Selected run</p>
+                  <h3>Details &amp; exports</h3>
+                </div>
+              </div>
+              <div id="runDetailPanel" class="run-detail-panel">
+                <p class="empty-state">Select a run above to view details, reports, and export options.</p>
+              </div>
+            </section>
+
+            <section class="card compare-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">Compare</p>
+                  <h3>Run diff</h3>
+                </div>
+              </div>
+              <div class="run-compare-bar">
+                <select id="compareRunA" class="compact-input"><option value="">Run A</option></select>
+                <select id="compareRunB" class="compact-input"><option value="">Run B</option></select>
+                <button id="compareRunsBtn" class="button tertiary" type="button">Compare</button>
+              </div>
+              <div id="runComparePanel" class="run-compare-panel">
+                <p class="empty-state">Pick two runs to see added and removed jobs.</p>
+              </div>
+            </section>
+
+            <section class="card portability-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">Data</p>
+                  <h3>Backup &amp; restore</h3>
+                </div>
+              </div>
+              <div class="data-portability-bar">
+                <a id="exportBundleBtn" class="button tertiary" href="/api/export/bundle" download>Export bundle</a>
+                <label class="button tertiary import-bundle-label">
+                  Import bundle
+                  <input id="importBundleInput" type="file" accept="application/json,.json" hidden />
+                </label>
+                <button id="portalHealthBtn" class="button tertiary" type="button">Check portals</button>
+              </div>
+            </section>
+          </div>
+
+          <div id="jobsTabJobs" class="tab-panel" data-jobs-panel="jobs" role="tabpanel" hidden>
+            <section class="card upskilled-filter-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">Filters</p>
+                  <h3>Apply upskilled skills</h3>
+                </div>
+              </div>
+              <div id="upskilledCategoryStrip" class="upskilled-category-strip">
+                <p class="empty-state">Upskilling categories from other runs appear here.</p>
+              </div>
+            </section>
+
+            <section class="card shortlist-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">Shortlist</p>
+                  <h3>Top matches</h3>
+                </div>
+                <select id="shortlistSortSelect" class="compact-input">
+                  <option value="overallBet">Sort: Overall bet</option>
+                  <option value="fit">Sort: Fit score</option>
+                  <option value="salary">Sort: Salary signal</option>
+                  <option value="company">Sort: Company</option>
+                </select>
+              </div>
+              <div id="shortlistGrid" class="job-grid">
+                <p class="empty-state">Select a run, then browse shortlisted roles here.</p>
+              </div>
+            </section>
+
+            <section class="card market-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">Market board</p>
+                  <h3>All qualified openings</h3>
+                </div>
+                <div class="market-actions">
+                  <input id="jobSearchInput" class="compact-input" type="text" placeholder="Search roles, skills, companies..." />
+                  <select id="jobFilterSelect" class="compact-input">
+                    <option value="eligible">Eligible only</option>
+                    <option value="all">All jobs</option>
+                    <option value="remote">Remote only</option>
+                    <option value="bestbet">High overall bet</option>
+                  </select>
+                </div>
+              </div>
+              <div id="marketBoard" class="market-board">
+                <p class="empty-state">Select a run to browse eligible jobs.</p>
+              </div>
+            </section>
+          </div>
+
+          <div id="jobsTabTracker" class="tab-panel" data-jobs-panel="tracker" role="tabpanel" hidden>
+            <section class="card tracker-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">Applications</p>
+                  <h3>Pipeline status</h3>
+                </div>
+              </div>
+              <div id="trackerBoard" class="tracker-board">
+                <p class="empty-state">Track saved, applied, interview, and rejected states here.</p>
+              </div>
+            </section>
+
+            <section class="card email-drafts-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">Outreach</p>
+                  <h3>Email apply drafts</h3>
+                </div>
+              </div>
+              <div id="emailDraftsPanel" class="email-drafts-panel">
+                <p class="empty-state">Email drafts appear when a run includes email-route roles.</p>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <div id="upskillingDashboardGroup" class="dashboard-group" hidden>
+          <nav id="upskillTabBar" class="workspace-tabs" role="tablist" aria-label="Upskilling workspace">
+            <button type="button" class="workspace-tab active" data-upskill-tab="overview" role="tab">Overview</button>
+            <button type="button" class="workspace-tab" data-upskill-tab="runs" role="tab">Runs</button>
+            <button type="button" class="workspace-tab" data-upskill-tab="learning" role="tab">Learning</button>
+          </nav>
+
+          <div id="upskillTabOverview" class="tab-panel active" data-upskill-panel="overview" role="tabpanel">
+            <section class="card upskill-summary-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">Summary</p>
+                  <h3>Readiness snapshot</h3>
+                </div>
+              </div>
+              <div id="upskillSummaryStrip" class="summary-strip">
+                <p class="empty-state">Select an upskilling run to load readiness metrics.</p>
+              </div>
+            </section>
+            <section id="upskillPipelineSection" class="card pipeline-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">Progress</p>
+                  <h3>Pipeline</h3>
+                </div>
+              </div>
+              <div id="upskillPipelineBoard" class="pipeline-board">
+                <p class="empty-state">Pipeline appears during an active upskilling run.</p>
+              </div>
+            </section>
+          </div>
+
+          <div id="upskillTabRuns" class="tab-panel" data-upskill-panel="runs" role="tabpanel" hidden>
+            <section class="card history-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">History</p>
+                  <h3>Upskilling runs</h3>
+                </div>
+              </div>
+              <div id="upskillRunHistoryList" class="history-list history-list--mirror">
+                <p class="empty-state">Runs appear in the shared history list on the Jobs dashboard Runs tab.</p>
+              </div>
+            </section>
+          </div>
+
+          <div id="upskillTabLearning" class="tab-panel" data-upskill-panel="learning" role="tabpanel" hidden>
+            <section class="card skill-gap-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">Skill gaps</p>
+                  <h3>What to close next</h3>
+                </div>
+              </div>
+              <div id="skillGapGrid" class="skill-gap-grid">
+                <p class="empty-state">Select an upskilling run to inspect skill gaps.</p>
+              </div>
+            </section>
+
+            <section class="card course-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">Courses</p>
+                  <h3>Learning paths</h3>
+                </div>
+              </div>
+              <div id="courseGrid" class="course-grid">
+                <p class="empty-state">Select an upskilling run to view recommended courses.</p>
+              </div>
+            </section>
+
+            <section class="card task-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">Tasks</p>
+                  <h3>Study queue</h3>
+                </div>
+              </div>
+              <div id="taskList" class="task-list">
+                <p class="empty-state">Select an upskilling run to inspect your study queue.</p>
+              </div>
+            </section>
+
+            <section class="card strategy-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">Strategy</p>
+                  <h3>Next role readiness</h3>
+                </div>
+              </div>
+              <div id="strategyBoard" class="strategy-board">
+                <p class="empty-state">Select an upskilling run for strategic recommendations.</p>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <div id="transitionDashboardGroup" class="dashboard-group" hidden>
+          <nav id="transitionTabBar" class="workspace-tabs" role="tablist" aria-label="Transition workspace">
+            <button type="button" class="workspace-tab active" data-transition-tab="overview" role="tab">Overview</button>
+            <button type="button" class="workspace-tab" data-transition-tab="runs" role="tab">Runs</button>
+            <button type="button" class="workspace-tab" data-transition-tab="plan" role="tab">Plan</button>
+          </nav>
+
+          <div id="transitionTabOverview" class="tab-panel active" data-transition-panel="overview" role="tabpanel">
+            <section class="card transition-summary-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">Summary</p>
+                  <h3>Transition snapshot</h3>
+                </div>
+              </div>
+              <div id="transitionSummaryStrip" class="summary-strip">
+                <p class="empty-state">Select a transition run to load career-switch metrics.</p>
+              </div>
+            </section>
+          </div>
+
+          <div id="transitionTabRuns" class="tab-panel" data-transition-panel="runs" role="tabpanel" hidden>
+            <section class="card history-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">History</p>
+                  <h3>Transition runs</h3>
+                </div>
+              </div>
+              <p class="subtle">Select a run to load transition insights in the Plan tab.</p>
+              <div id="transitionRunHistoryList" class="history-list">
+                <p class="empty-state">No transition runs yet.</p>
+              </div>
+            </section>
+          </div>
+
+          <div id="transitionTabPlan" class="tab-panel" data-transition-panel="plan" role="tabpanel" hidden>
+            <section class="card transition-role-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">Role paths</p>
+                  <h3>Bridge roles</h3>
+                </div>
+              </div>
+              <div id="transitionRoleGrid" class="transition-role-grid">
+                <p class="empty-state">Select a transition run to inspect bridge roles.</p>
+              </div>
+            </section>
+
+            <section class="card strength-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">Strengths</p>
+                  <h3>What transfers</h3>
+                </div>
+              </div>
+              <div id="transitionStrengthGrid" class="skill-gap-grid">
+                <p class="empty-state">Select a transition run to inspect transferable strengths.</p>
+              </div>
+            </section>
+
+            <section class="card transition-gap-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">Gaps</p>
+                  <h3>What to build</h3>
+                </div>
+              </div>
+              <div id="transitionGapGrid" class="skill-gap-grid">
+                <p class="empty-state">Select a transition run to inspect missing foundations.</p>
+              </div>
+            </section>
+
+            <section class="card transition-course-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">Learning</p>
+                  <h3>Courses and paths</h3>
+                </div>
+              </div>
+              <div id="transitionCourseGrid" class="course-grid">
+                <p class="empty-state">Select a transition run to inspect learning paths.</p>
+              </div>
+            </section>
+
+            <section class="card task-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">Tasks</p>
+                  <h3>Preparation queue</h3>
+                </div>
+              </div>
+              <div id="transitionTaskList" class="task-list">
+                <p class="empty-state">Select a transition run to inspect your task list.</p>
+              </div>
+            </section>
+
+            <section class="card strategy-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-label">Strategy</p>
+                  <h3>Routes and compensation</h3>
+                </div>
+              </div>
+              <div id="transitionStrategyBoard" class="strategy-board">
+                <p class="empty-state">Select a transition run for full transition strategy.</p>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <div hidden aria-hidden="true">
+          <p id="backendLogMeta"></p>
+          <div id="backendLogActions"></div>
+        </div>
+      </main>
+    </div>
+
+    <div id="workspacePanelBackdrop" class="settings-drawer-backdrop"></div>
+    <aside id="workspaceSection" class="settings-drawer" aria-hidden="true">
+      <div class="settings-drawer__shell">
+        <header class="settings-drawer__head">
+          <div class="settings-drawer__head-copy">
+            <p class="section-label">Settings</p>
+            <h3>Profile &amp; preferences</h3>
+            <p class="subtle">Profile details, search preferences, portals, and optional LLM configuration.</p>
+          </div>
+          <div class="settings-drawer__head-actions">
+            <button id="saveConfigBtn" class="button primary" type="button">Save</button>
+            <button id="closeWorkspacePanelBtn" class="button ghost" type="button" aria-label="Close settings">Close</button>
+          </div>
+        </header>
+        <nav class="settings-drawer__nav" aria-label="Settings sections">
+          <a class="settings-drawer__nav-link" href="#profileSetupBlock">Profile</a>
+          <a class="settings-drawer__nav-link" href="#runGuardrailsBlock">Search &amp; run</a>
+          <a class="settings-drawer__nav-link" href="#llmSettingsBlock">LLM</a>
+        </nav>
+        <div id="workspacePanelBody" class="settings-drawer__body">
+          <section id="profileSetupBlock" class="settings-section">
+            <div class="settings-section__head">
+              <h4>Profile</h4>
+              <p class="subtle">Used for resume tailoring and application autofill.</p>
+            </div>
             <form id="configForm" class="form-grid">
-              <label>
-                <span>Name</span>
-                <input id="name" type="text" />
-              </label>
-              <label>
-                <span>Current Title</span>
-                <input id="currentTitle" type="text" />
-              </label>
-              <label>
-                <span>Email</span>
-                <input id="email" type="email" />
-              </label>
-              <label>
-                <span>Phone</span>
-                <input id="phone" type="text" />
-              </label>
-              <label>
-                <span>Experience (Years)</span>
-                <input id="experienceYears" type="number" min="0" step="1" />
-              </label>
-              <label>
-                <span>LinkedIn</span>
-                <input id="linkedin" type="text" />
-              </label>
+              <label><span>Name</span><input id="name" type="text" /></label>
+              <label><span>Current Title</span><input id="currentTitle" type="text" /></label>
+              <label><span>Email</span><input id="email" type="email" /></label>
+              <label><span>Phone</span><input id="phone" type="text" /></label>
+              <label><span>Experience (Years)</span><input id="experienceYears" type="number" min="0" step="1" /></label>
+              <label><span>LinkedIn</span><input id="linkedin" type="text" /></label>
               <div class="full-span stack-field">
-                <div class="stack-field-head">
-                  <span>Resume Summary</span>
-                  <button type="button" class="stack-refresh" data-stack-refresh="resumeSummary">Refresh Suggestions</button>
-                </div>
-                <p class="stack-helper">Keep this as focused highlight labels so the agent can reuse them for search, ranking, and tailoring.</p>
+                <div class="stack-field-head"><span>Resume Summary</span><button type="button" class="stack-refresh" data-stack-refresh="resumeSummary">Refresh Suggestions</button></div>
                 <div id="resumeSummaryStack" class="label-stack"></div>
-                <div class="stack-entry-row">
-                  <input
-                    id="resumeSummaryStackInput"
-                    class="stack-entry-input"
-                    data-stack-input="resumeSummary"
-                    type="text"
-                    placeholder="Add a positioning label and press Enter"
-                  />
-                  <button type="button" class="button tertiary stack-add-button" data-stack-target="resumeSummary">Add</button>
-                </div>
+                <div class="stack-entry-row"><input id="resumeSummaryStackInput" class="stack-entry-input" data-stack-input="resumeSummary" type="text" placeholder="Add a positioning label and press Enter" /><button type="button" class="button tertiary stack-add-button" data-stack-target="resumeSummary">Add</button></div>
                 <div id="resumeSummarySuggestions" class="stack-suggestions"></div>
                 <textarea id="resumeSummary" rows="4" hidden></textarea>
               </div>
               <div class="full-span stack-field">
-                <div class="stack-field-head">
-                  <span>Skills</span>
-                  <button type="button" class="stack-refresh" data-stack-refresh="skills">Refresh Suggestions</button>
-                </div>
-                <p class="stack-helper">Use clean skill blocks instead of long paragraphs so matching stays stronger and more explicit.</p>
+                <div class="stack-field-head"><span>Skills</span><button type="button" class="stack-refresh" data-stack-refresh="skills">Refresh Suggestions</button></div>
                 <div id="skillsStack" class="label-stack"></div>
-                <div class="stack-entry-row">
-                  <input
-                    id="skillsStackInput"
-                    class="stack-entry-input"
-                    data-stack-input="skills"
-                    type="text"
-                    placeholder="Add a skill label"
-                  />
-                  <button type="button" class="button tertiary stack-add-button" data-stack-target="skills">Add</button>
-                </div>
+                <div class="stack-entry-row"><input id="skillsStackInput" class="stack-entry-input" data-stack-input="skills" type="text" placeholder="Add a skill label" /><button type="button" class="button tertiary stack-add-button" data-stack-target="skills">Add</button></div>
                 <div id="skillsSuggestions" class="stack-suggestions"></div>
                 <textarea id="skills" rows="3" hidden></textarea>
               </div>
               <div class="full-span stack-field">
-                <div class="stack-field-head">
-                  <span>Target Titles</span>
-                  <button type="button" class="stack-refresh" data-stack-refresh="targetTitles">Refresh Suggestions</button>
-                </div>
-                <p class="stack-helper">Target role blocks drive both the search expansion and the JD similarity checks.</p>
+                <div class="stack-field-head"><span>Target Titles</span><button type="button" class="stack-refresh" data-stack-refresh="targetTitles">Refresh Suggestions</button></div>
                 <div id="targetTitlesStack" class="label-stack"></div>
-                <div class="stack-entry-row">
-                  <input
-                    id="targetTitlesStackInput"
-                    class="stack-entry-input"
-                    data-stack-input="targetTitles"
-                    type="text"
-                    placeholder="Add a target title"
-                  />
-                  <button type="button" class="button tertiary stack-add-button" data-stack-target="targetTitles">Add</button>
-                </div>
+                <div class="stack-entry-row"><input id="targetTitlesStackInput" class="stack-entry-input" data-stack-input="targetTitles" type="text" placeholder="Add a target title" /><button type="button" class="button tertiary stack-add-button" data-stack-target="targetTitles">Add</button></div>
                 <div id="targetTitlesSuggestions" class="stack-suggestions"></div>
                 <textarea id="targetTitles" rows="2" hidden></textarea>
               </div>
               <div class="full-span stack-field">
-                <div class="stack-field-head">
-                  <span>Search Queries</span>
-                  <button type="button" class="stack-refresh" data-stack-refresh="searchQueries">Refresh Suggestions</button>
-                </div>
-                <p class="stack-helper">These are the search intents the job research agent will actively run across portals.</p>
+                <div class="stack-field-head"><span>Search Queries</span><button type="button" class="stack-refresh" data-stack-refresh="searchQueries">Refresh Suggestions</button></div>
                 <div id="searchQueriesStack" class="label-stack"></div>
-                <div class="stack-entry-row">
-                  <input
-                    id="searchQueriesStackInput"
-                    class="stack-entry-input"
-                    data-stack-input="searchQueries"
-                    type="text"
-                    placeholder="Add one search query"
-                  />
-                  <button type="button" class="button tertiary stack-add-button" data-stack-target="searchQueries">Add</button>
-                </div>
+                <div class="stack-entry-row"><input id="searchQueriesStackInput" class="stack-entry-input" data-stack-input="searchQueries" type="text" placeholder="Add one search query" /><button type="button" class="button tertiary stack-add-button" data-stack-target="searchQueries">Add</button></div>
                 <div id="searchQueriesSuggestions" class="stack-suggestions"></div>
                 <textarea id="searchQueries" rows="3" hidden></textarea>
               </div>
-              <label class="full-span">
-                <span>Avoid Keywords</span>
-                <textarea id="avoidKeywords" rows="2" placeholder="Comma separated"></textarea>
-              </label>
+              <label class="full-span"><span>Avoid Keywords</span><textarea id="avoidKeywords" rows="2" placeholder="Comma separated"></textarea></label>
             </form>
-              </section>
-
-              <section id="runGuardrailsBlock" class="card policy-card drawer-card">
-            <div class="card-head">
-              <div>
-                <p class="section-label">Run Setup</p>
-                <h3>Guardrails and Mode</h3>
-              </div>
-              <p class="subtle">Controls that decide where agents search, how they evaluate roles, and which workflow runs.</p>
-            </div>
-
+          </section>
+          <section id="runGuardrailsBlock" class="settings-section">
+            <div class="settings-section__head"><h4>Search &amp; run</h4><p class="subtle">Portals, location, salary guardrails, and run mode.</p></div>
             <div class="form-grid compact-grid">
-              <label>
-                <span>Expected Physical Location</span>
-                <input id="expectedPhysicalLocation" type="text" />
-              </label>
-              <label>
-                <span>Minimum Fit Score</span>
-                <input id="minimumScore" type="number" min="0" max="100" />
-              </label>
-              <label>
-                <span>Salary Currency</span>
-                <input id="salaryCurrency" type="text" />
-              </label>
-              <label>
-                <span>Current Compensation</span>
-                <input id="currentAnnualCompensation" type="number" min="0" />
-              </label>
-              <label>
-                <span>Minimum Compensation</span>
-                <input id="minimumAnnualCompensation" type="number" min="0" />
-              </label>
-              <label>
-                <span>Stretch Compensation (Optional)</span>
-                <input id="targetAnnualCompensation" type="number" min="0" />
-              </label>
-              <label class="checkbox">
-                <input id="easyApplyOnly" type="checkbox" />
-                <span>LinkedIn Easy Apply only</span>
-              </label>
-              <label>
-                <span>Portal</span>
-                <select id="portal">
-                  <option value="both">Both</option>
-                  <option value="linkedin">LinkedIn</option>
-                  <option value="naukri">Naukri</option>
-                </select>
-              </label>
-              <label>
-                <span>Mode</span>
-                <select id="mode">
-                  <option value="search">Search</option>
-                  <option value="assist-apply">Assist Apply</option>
-                  <option value="next-role">Find My Next Role</option>
-                  <option value="career-transition">Career Transition</option>
-                  <option value="gmail-cleanup">Gmail Cleanup</option>
-                </select>
-              </label>
-              <label class="checkbox">
-                <input id="headed" type="checkbox" />
-                <span>Open browser for login or review</span>
-              </label>
-              <label>
-                <span>Current Career Domain</span>
-                <input id="currentCareerDomain" type="text" placeholder="technology, sales, marketing, bpo/kpo..." />
-              </label>
-              <label>
-                <span>Target Career Domain</span>
-                <input id="targetCareerDomain" type="text" placeholder="marketing and sales, technology, back office..." />
-              </label>
-              <label class="full-span">
-                <span>Transition Target Roles</span>
-                <textarea id="transitionRoles" rows="2" placeholder="Comma separated bridge roles"></textarea>
-              </label>
-              <label>
-                <span>Transition Level</span>
-                <select id="transitionLevel">
-                  <option value="entry">Entry</option>
-                  <option value="bridge">Bridge</option>
-                  <option value="lateral">Lateral</option>
-                  <option value="stretch">Stretch</option>
-                </select>
-              </label>
-              <label class="full-span">
-                <span>Transition Notes</span>
-                <textarea id="transitionNotes" rows="3" placeholder="Constraints, preferences, or context for the career move"></textarea>
-              </label>
+              <label><span>Expected Physical Location</span><input id="expectedPhysicalLocation" type="text" /></label>
+              <label><span>Minimum Fit Score</span><input id="minimumScore" type="number" min="0" max="100" /></label>
+              <label><span>Salary Currency</span><input id="salaryCurrency" type="text" /></label>
+              <label><span>Current Compensation</span><input id="currentAnnualCompensation" type="number" min="0" /></label>
+              <label><span>Minimum Compensation</span><input id="minimumAnnualCompensation" type="number" min="0" /></label>
+              <label><span>Stretch Compensation (Optional)</span><input id="targetAnnualCompensation" type="number" min="0" /></label>
+              <label class="checkbox"><input id="easyApplyOnly" type="checkbox" /><span>LinkedIn Easy Apply only</span></label>
+              <label><span>Portal</span><select id="portal"><option value="both">Both</option><option value="linkedin">LinkedIn</option><option value="naukri">Naukri</option></select></label>
+              <label><span>Mode</span><select id="mode"><option value="search">Search</option><option value="assist-apply">Assist Apply</option><option value="next-role">Find My Next Role</option><option value="career-transition">Career Transition</option></select></label>
+              <label class="checkbox"><input id="headed" type="checkbox" /><span>Open browser for login or review</span></label>
+              <label><span>Current Career Domain</span><input id="currentCareerDomain" type="text" placeholder="technology, sales, marketing..." /></label>
+              <label><span>Target Career Domain</span><input id="targetCareerDomain" type="text" placeholder="marketing and sales, technology..." /></label>
+              <label class="full-span"><span>Transition Target Roles</span><textarea id="transitionRoles" rows="2" placeholder="Comma separated bridge roles"></textarea></label>
+              <label><span>Transition Level</span><select id="transitionLevel"><option value="entry">Entry</option><option value="bridge">Bridge</option><option value="lateral">Lateral</option><option value="stretch">Stretch</option></select></label>
+              <label class="full-span"><span>Transition Notes</span><textarea id="transitionNotes" rows="3" placeholder="Constraints or context for the career move"></textarea></label>
             </div>
-              </section>
-
-              <section id="llmSettingsBlock" class="card policy-card drawer-card">
-            <div class="card-head">
-              <div>
-                <p class="section-label">LLM Provider</p>
-                <h3>Local model settings</h3>
-              </div>
-              <p class="subtle">Bring your own key or webhook. Stored in local config.json on your machine.</p>
-            </div>
+          </section>
+          <section id="llmSettingsBlock" class="settings-section">
+            <div class="settings-section__head"><h4>LLM provider</h4><p class="subtle">Optional — keyword-only mode works without an API key.</p></div>
             <div class="form-grid compact-grid">
-              <label>
-                <span>Provider</span>
-                <select id="llmProvider">
-                  <option value="openai-compatible">OpenAI-compatible</option>
-                  <option value="webhook">Webhook</option>
-                  <option value="keyword-only">Keyword-only (no LLM)</option>
-                </select>
-              </label>
-              <label>
-                <span>Model</span>
-                <input id="llmModel" type="text" placeholder="gpt-4.1-mini" />
-              </label>
-              <label class="full-span">
-                <span>Base URL</span>
-                <input id="llmBaseUrl" type="text" placeholder="https://api.openai.com/v1" />
-              </label>
-              <label class="full-span">
-                <span>API Key (optional if set in .env)</span>
-                <input id="llmApiKey" type="password" placeholder="sk-..." autocomplete="off" />
-              </label>
-              <label class="full-span">
-                <span>Webhook URL</span>
-                <input id="llmWebhookUrl" type="text" placeholder="http://localhost:8080/llm" />
-              </label>
-              <div class="full-span">
-                <button id="testLlmBtn" class="button tertiary" type="button">Test LLM connection</button>
-                <p id="llmTestMeta" class="subtle"></p>
-              </div>
-            </div>
-              </section>
-
-              <section id="gmailSection" class="card policy-card drawer-card">
-            <div class="card-head">
-              <div>
-                <p class="section-label">Gmail Cleanup</p>
-                <h3>Offers and Promotions Agent</h3>
-              </div>
-              <p class="subtle">Connect Gmail through a local OAuth desktop flow, preview matching promotions, then choose preview, trash, or permanent delete.</p>
-            </div>
-
-            <div class="form-grid compact-grid">
-              <label class="checkbox">
-                <input id="gmailEnabled" type="checkbox" />
-                <span>Enable Gmail cleanup in config</span>
-              </label>
-              <label>
-                <span>Default Action</span>
-                <select id="gmailAction">
-                  <option value="preview">Preview only</option>
-                  <option value="trash">Move to trash</option>
-                  <option value="delete">Permanent delete</option>
-                </select>
-              </label>
-              <label class="full-span">
-                <span>Gmail Query</span>
-                <textarea id="gmailQuery" rows="3" placeholder="category:promotions OR label:^smartlabel_promo"></textarea>
-              </label>
-              <label>
-                <span>Credentials File</span>
-                <input id="gmailCredentialsPath" type="text" placeholder="credentials.json" />
-              </label>
-              <label>
-                <span>Token Directory</span>
-                <input id="gmailTokenDir" type="text" placeholder="data/gmail" />
-              </label>
-              <label>
-                <span>Batch Size</span>
-                <input id="gmailBatchSize" type="number" min="1" max="100" />
-              </label>
-              <label>
-                <span>Max Messages Per Run</span>
-                <input id="gmailMaxMessagesPerRun" type="number" min="1" />
-              </label>
-              <label>
-                <span>Preview Sample Size</span>
-                <input id="gmailPreviewSampleSize" type="number" min="1" />
-              </label>
-            </div>
-              </section>
-            </div>
-
-            <div class="workspace-panel-footer">
-              <p class="subtle">All profile filters, salary rules, transition settings, and Gmail cleanup configuration live here so the main screen can stay dedicated to pipeline progress and results.</p>
-              <button id="closeWorkspacePanelFooterBtn" class="button secondary" type="button">Done</button>
-            </div>
-          </div>
-        </aside>
-
-        <section class="operations-grid">
-          <section class="card history-card">
-            <div class="card-head">
-              <div>
-                <p class="section-label">Run History</p>
-                <h3 id="historyTitle">Eligible Job Runs</h3>
-              </div>
-              <button id="refreshHistoryBtn" class="button tertiary" type="button">Refresh History</button>
-            </div>
-            <div id="runHistoryList" class="history-list">
-              <p class="empty-state">No runs yet.</p>
-            </div>
-          </section>
-
-          <section id="logsSection" class="card logs-card">
-            <div class="card-head">
-              <div>
-                <p class="section-label">Backend Trace</p>
-                <h3>Log File Access</h3>
-              </div>
-            </div>
-            <p id="backendLogMeta" class="subtle">Select a run to open its backend log file.</p>
-            <div id="backendLogActions" class="backend-log-actions">
-              <p class="empty-state">A run-specific backend log link will appear here.</p>
-            </div>
-          </section>
-        </section>
-
-        <section id="resultsSection" class="card selection-card">
-          <div class="card-head">
-            <div>
-              <p class="section-label">Run Outputs</p>
-              <h3 id="selectedRunHeading">Selected Run</h3>
-            </div>
-            <button id="clearSelectionBtn" class="button tertiary" type="button">Clear Selection</button>
-          </div>
-          <p id="selectedRunMeta" class="subtle">Select a run from history to inspect its outputs. Previous run data is intentionally not loaded by default.</p>
-        </section>
-
-        <div id="jobsDashboardGroup" class="dashboard-group">
-          <section class="card upskilled-filter-card">
-            <div class="card-head">
-              <div>
-                <p class="section-label">Upskilled Categories</p>
-                <h3>Apply Learning To Search</h3>
-              </div>
-              <p class="subtle">Click a category you have already upskilled in and we will add it to the job-search criteria.</p>
-            </div>
-            <div id="upskilledCategoryStrip" class="upskilled-category-strip">
-              <p class="empty-state">Run the upskilling or career-transition dashboard to surface reusable categories here.</p>
-            </div>
-          </section>
-
-          <section id="searchSection" class="card result-card">
-            <div class="card-head">
-              <div>
-                <p class="section-label">Eligible Jobs</p>
-                <h3>Jobs Snapshot</h3>
-              </div>
-            </div>
-            <div id="summaryStrip" class="summary-strip">
-              <p class="empty-state">Select a job-focused run to load summary metrics.</p>
-            </div>
-            <div id="shortlistCriteriaStrip" class="shortlist-criteria-strip">
-              <p class="empty-state">Active shortlist criteria will appear here for job-focused runs.</p>
-            </div>
-            <div id="shortlistGrid" class="job-grid">
-              <p class="empty-state">Select a run to inspect shortlisted and eligible jobs.</p>
-            </div>
-          </section>
-
-          <section class="card market-card">
-            <div class="card-head">
-              <div>
-                <p class="section-label">Eligible Jobs Board</p>
-                <h3>Qualified Openings</h3>
-              </div>
-              <div class="market-actions">
-                <input id="jobSearchInput" class="compact-input" type="text" placeholder="Hybrid search role, JD concept, architecture, Kafka..." />
-                <select id="jobFilterSelect" class="compact-input">
-                  <option value="eligible">Eligible only</option>
-                  <option value="all">All jobs</option>
-                  <option value="remote">Remote only</option>
-                  <option value="bestbet">High overall bet</option>
-                </select>
-              </div>
-            </div>
-            <div id="marketBoard" class="market-board">
-              <p class="empty-state">Select a run to inspect eligible job results.</p>
+              <label><span>Provider</span><select id="llmProvider"><option value="openai-compatible">OpenAI-compatible</option><option value="webhook">Webhook</option><option value="keyword-only">Keyword-only (no LLM)</option></select></label>
+              <label><span>Model</span><input id="llmModel" type="text" placeholder="gpt-4.1-mini" /></label>
+              <label class="full-span"><span>Base URL</span><input id="llmBaseUrl" type="text" placeholder="https://api.openai.com/v1" /></label>
+              <label class="full-span"><span>API Key (optional if set in .env)</span><input id="llmApiKey" type="password" placeholder="sk-..." autocomplete="off" /></label>
+              <label class="full-span"><span>Webhook URL</span><input id="llmWebhookUrl" type="text" placeholder="http://localhost:8080/llm" /></label>
+              <div class="full-span"><button id="testLlmBtn" class="button tertiary" type="button">Test LLM connection</button><button id="ollamaPresetBtn" class="button tertiary" type="button">Apply Ollama preset</button><p id="llmTestMeta" class="subtle"></p></div>
             </div>
           </section>
         </div>
-
-        <div id="upskillingDashboardGroup" class="dashboard-group" hidden>
-          <section class="card upskill-summary-card">
-            <div class="card-head">
-              <div>
-                <p class="section-label">Upskilling Summary</p>
-                <h3>Readiness Snapshot</h3>
-              </div>
-              <p class="subtle">Track missing skills, learning paths, and course recommendations for next-role readiness.</p>
-            </div>
-            <div id="upskillSummaryStrip" class="summary-strip">
-              <p class="empty-state">Select an upskilling run to load readiness metrics.</p>
-            </div>
-          </section>
-
-          <section class="card skill-gap-card">
-            <div class="card-head">
-              <div>
-                <p class="section-label">Skill Gaps</p>
-                <h3>What To Close Next</h3>
-              </div>
-            </div>
-            <div id="skillGapGrid" class="skill-gap-grid">
-              <p class="empty-state">Select an upskilling run to inspect market-demanded skills and gaps.</p>
-            </div>
-          </section>
-
-          <section class="card course-card">
-            <div class="card-head">
-              <div>
-                <p class="section-label">Course Recommendations</p>
-                <h3>Learning Paths and Labs</h3>
-              </div>
-            </div>
-            <div id="courseGrid" class="course-grid">
-              <p class="empty-state">Select an upskilling run to view learning paths and recommended courses.</p>
-            </div>
-          </section>
-
-          <section class="card task-card">
-            <div class="card-head">
-              <div>
-                <p class="section-label">Upskilling Tasks</p>
-                <h3>Study Queue</h3>
-              </div>
-              <p class="subtle">Actionable learning tasks based on role readiness and current market demand.</p>
-            </div>
-            <div id="taskList" class="task-list">
-              <p class="empty-state">Select an upskilling run to inspect your study queue.</p>
-            </div>
-          </section>
-
-          <section class="card strategy-card">
-            <div class="card-head">
-              <div>
-                <p class="section-label">Career Strategy</p>
-                <h3>Next Role Readiness</h3>
-              </div>
-              <p class="subtle">Role projections, target companies, and fair compensation guidance appear here.</p>
-            </div>
-            <div id="strategyBoard" class="strategy-board">
-              <p class="empty-state">Select an upskilling run to inspect strategic recommendations.</p>
-            </div>
-          </section>
-        </div>
-
-        <div id="transitionDashboardGroup" class="dashboard-group" hidden>
-          <section class="card transition-summary-card">
-            <div class="card-head">
-              <div>
-                <p class="section-label">Transition Summary</p>
-                <h3>Transition Snapshot</h3>
-              </div>
-              <p class="subtle">Map transferable strengths, realistic bridge roles, missing foundations, and transition-safe opportunities.</p>
-            </div>
-            <div id="transitionSummaryStrip" class="summary-strip">
-              <p class="empty-state">Select a transition run to load career-switch metrics.</p>
-            </div>
-          </section>
-
-          <section class="card transition-role-card">
-            <div class="card-head">
-              <div>
-                <p class="section-label">Role Paths</p>
-                <h3>Bridge Roles To Target</h3>
-              </div>
-            </div>
-            <div id="transitionRoleGrid" class="transition-role-grid">
-              <p class="empty-state">Select a transition run to inspect recommended bridge roles.</p>
-            </div>
-          </section>
-
-          <section class="card strength-card">
-            <div class="card-head">
-              <div>
-                <p class="section-label">Transferable Strengths</p>
-                <h3>What Already Transfers</h3>
-              </div>
-            </div>
-            <div id="transitionStrengthGrid" class="skill-gap-grid">
-              <p class="empty-state">Select a transition run to inspect transferable strengths.</p>
-            </div>
-          </section>
-
-          <section class="card transition-gap-card">
-            <div class="card-head">
-              <div>
-                <p class="section-label">Missing Foundations</p>
-                <h3>What To Build Next</h3>
-              </div>
-            </div>
-            <div id="transitionGapGrid" class="skill-gap-grid">
-              <p class="empty-state">Select a transition run to inspect missing foundations and demand signals.</p>
-            </div>
-          </section>
-
-          <section class="card transition-course-card">
-            <div class="card-head">
-              <div>
-                <p class="section-label">Transition Learning</p>
-                <h3>Courses and Learning Paths</h3>
-              </div>
-            </div>
-            <div id="transitionCourseGrid" class="course-grid">
-              <p class="empty-state">Select a transition run to inspect learning paths.</p>
-            </div>
-          </section>
-
-          <section class="card task-card">
-            <div class="card-head">
-              <div>
-                <p class="section-label">Transition Tasks</p>
-                <h3>Preparation Queue</h3>
-              </div>
-            </div>
-            <div id="transitionTaskList" class="task-list">
-              <p class="empty-state">Select a transition run to inspect your transition task list.</p>
-            </div>
-          </section>
-
-          <section class="card strategy-card">
-            <div class="card-head">
-              <div>
-                <p class="section-label">Transition Strategy</p>
-                <h3>Market Routes and Compensation</h3>
-              </div>
-              <p class="subtle">Use this to choose the safest bridge path, strongest target companies, and realistic pay expectations.</p>
-            </div>
-            <div id="transitionStrategyBoard" class="strategy-board">
-              <p class="empty-state">Select a transition run to inspect the full transition strategy.</p>
-            </div>
-          </section>
-        </div>
-
-        <div id="gmailDashboardGroup" class="dashboard-group" hidden>
-          <section class="card gmail-summary-card">
-            <div class="card-head">
-              <div>
-                <p class="section-label">Cleanup Summary</p>
-                <h3>Matched Promotions</h3>
-              </div>
-              <p class="subtle">Each run stores the action, Gmail query, total matched emails, and a sample preview before or after cleanup.</p>
-            </div>
-            <div id="gmailSummaryStrip" class="summary-strip">
-              <p class="empty-state">Select a Gmail cleanup run to load cleanup metrics.</p>
-            </div>
-          </section>
-
-          <section class="card gmail-query-card">
-            <div class="card-head">
-              <div>
-                <p class="section-label">Query Review</p>
-                <h3>Action and Search Scope</h3>
-              </div>
-            </div>
-            <div id="gmailQueryCard">
-              <p class="empty-state">Select a Gmail cleanup run to inspect its search query and action.</p>
-            </div>
-          </section>
-
-          <section class="card gmail-preview-card">
-            <div class="card-head">
-              <div>
-                <p class="section-label">Preview Emails</p>
-                <h3>Matched Sample</h3>
-              </div>
-              <p class="subtle">Use this sample to sanity-check the query before moving from preview to trash or delete.</p>
-            </div>
-            <div id="gmailPreviewGrid" class="gmail-preview-grid">
-              <p class="empty-state">Matched promotional emails will preview here after a Gmail cleanup run.</p>
-            </div>
-          </section>
-        </div>
-      </main>
-    </div>
+        <footer class="settings-drawer__foot">
+          <p class="subtle">Saved locally in config.json on your machine.</p>
+          <button id="closeWorkspacePanelFooterBtn" class="button secondary" type="button">Done</button>
+        </footer>
+      </div>
+    </aside>
 
     <template id="jobCardTemplate">
       <article class="job-card">
@@ -791,6 +710,14 @@
           </div>
         </div>
         <p class="job-reason"></p>
+        <div class="match-panel">
+          <p class="match-panel__label">Why this score</p>
+          <p class="score-reason"></p>
+          <p class="stability-line"></p>
+          <div class="match-skills"></div>
+          <div class="missing-skills"></div>
+        </div>
+        <div class="tracker-actions"></div>
         <div class="pill-row">
           <span class="work-pill"></span>
           <span class="route-pill"></span>
@@ -798,6 +725,90 @@
         <div class="card-links"></div>
       </article>
     </template>
+
+    <div id="aboutMeridianModal" class="modal" hidden>
+      <div class="modal__dialog about-modal">
+        <div class="about-modal__brand">
+          <svg class="app-logo-mark" width="40" height="40" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+            <path fill="#0F2744" d="M10 38V22.2L17.4 30.1 23.8 14.6 30.2 30.1 37.6 22.2V38H10Z" />
+            <circle cx="23.8" cy="10.2" r="3.6" fill="#C9A962" />
+          </svg>
+          <div>
+            <h3>Meridian</h3>
+            <p class="subtle">Open-source, local-first career operations agent.</p>
+          </div>
+        </div>
+        <p class="about-modal__lead">
+          Meridian helps you search roles, score fit, tailor resumes, plan upskilling, and explore career transitions —
+          as a structured workflow on your own machine.
+        </p>
+        <ul class="modal__list about-modal__list">
+          <li>Your resume, run logs, and browser sessions stay on this device.</li>
+          <li>No Meridian account or cloud upload of your profile is required.</li>
+          <li>LinkedIn and Naukri runs are assisted workflows — you review outputs before applying.</li>
+          <li>LLM calls only leave your machine when you configure a provider.</li>
+        </ul>
+        <section class="about-modal__links">
+          <p class="section-label">Learn more</p>
+          <a
+            class="about-modal__site-link"
+            href="https://vijayptiwari.github.io/meridian/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Documentation — vijayptiwari.github.io/meridian
+          </a>
+          <a
+            class="about-modal__site-link about-modal__site-link--secondary"
+            data-local-dashboard-link
+            href="http://127.0.0.1:3030"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open your dashboard — http://127.0.0.1:3030
+          </a>
+        </section>
+        <section class="about-modal__contact">
+          <p class="section-label">Contact</p>
+          <p class="subtle">Questions, feedback, or support:</p>
+          <a class="about-modal__email" href="mailto:vijayptiwari28@gmail.com">vijayptiwari28@gmail.com</a>
+        </section>
+        <div class="modal__actions">
+          <button id="closeAboutModalBtn" class="button primary" type="button">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="portalAckModal" class="modal" hidden>
+      <div class="modal__dialog">
+        <h3>Assisted portal run</h3>
+        <p class="subtle">
+          Meridian assists with job search workflows on LinkedIn and Naukri. You are responsible for complying with
+          portal terms of service. Review all generated content before submitting applications.
+        </p>
+        <ul class="modal__list">
+          <li>Runs use a local browser session stored on your machine.</li>
+          <li>Assisted apply requires your review before submission.</li>
+          <li>Only LLM API traffic leaves your device when configured.</li>
+        </ul>
+        <div class="modal__actions">
+          <button id="cancelPortalAckBtn" class="button tertiary" type="button">Cancel</button>
+          <button id="confirmPortalAckBtn" class="button primary" type="button">I understand — continue</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="resumeDiffModal" class="modal" hidden>
+      <div class="modal__dialog modal__dialog--wide">
+        <h3>Resume diff</h3>
+        <div id="resumeDiffBody" class="resume-diff-body">
+          <p class="empty-state">Loading diff...</p>
+        </div>
+        <div class="modal__actions">
+          <button id="closeResumeDiffBtn" class="button secondary" type="button">Close</button>
+        </div>
+      </div>
+    </div>
 
     <script src="/app.js"></script>
   </body>

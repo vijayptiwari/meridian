@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Privacy — Meridian</title>
+    <meta name="description" content="What stays local on your machine vs what may reach an LLM API." />
+    <link rel="icon" href="assets/brand/logo-icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/css/site.css" />
+  </head>
+  <body data-page="privacy" data-doc-page="privacy.html">
+    <div data-site-header></div>
+    <main class="doc-page">
+      <div class="doc-frame">
+        <div data-doc-sidebar></div>
+        <article class="doc-content">
+          <h1>Privacy model</h1>
+          <p class="lede">Meridian is local-first. The dashboard binds to <code>127.0.0.1</code> by default.</p>
+          <h2>Stays on your machine</h2>
+          <ul>
+            <li>Resume files and tailored outputs (<code>resume/</code>, <code>data/output/</code>)</li>
+            <li>Browser session state for LinkedIn/Naukri (<code>data/browser-state/</code>)</li>
+            <li>Run history, tracker state, wizard progress, checkpoints, and active-run snapshots (<code>data/ui/</code>)</li>
+            <li>API keys in <code>src/config.json</code> and <code>.env</code></li>
+          </ul>
+          <h2>May leave your machine (optional)</h2>
+          <ul>
+            <li>LLM API requests when you configure OpenAI-compatible, Ollama, or webhook providers</li>
+            <li>Portal pages loaded in Playwright during job research (standard HTTPS to LinkedIn/Naukri)</li>
+          </ul>
+          <h2>Keyword-only mode</h2>
+          <p>
+            Choose <strong>Keyword-only</strong> in Settings to score and shortlist without any LLM API calls — useful for zero-cost runs.
+          </p>
+          <div class="callout">
+            <strong>Diagram:</strong> Your machine → Meridian agents → local artifacts. Optional branch: LLM provider API only when configured.
+          </div>
+        </article>
+      </div>
+    </main>
+    <div data-site-footer></div>
+    <script src="assets/js/site.js"></script>
+  </body>
+</html>

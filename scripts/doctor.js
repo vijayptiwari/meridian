@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const { loadConfig } = require("../src/lib/config");
 const { resolveLlmConfig } = require("../src/lib/llm");
+const { checkPortalHealth } = require("../src/lib/portal-health");
 
 function checkNodeVersion() {
   const major = Number(process.version.slice(1).split(".")[0]);
@@ -69,8 +70,32 @@ function checkLlm(rootDir) {
   }
 }
 
-function main() {
+async function checkPortals(rootDir, options) {
+  const result = await checkPortalHealth({
+    skipNetwork: !options.probePortals
+  });
+
+  const payload = {
+    linkedin: result.linkedin,
+    naukri: result.naukri,
+    checkedAt: new Date().toISOString(),
+    probed: Boolean(options.probePortals && !result.skipped)
+  };
+
+  const healthPath = path.join(rootDir, "data", "ui", "portal-health.json");
+  fs.mkdirSync(path.dirname(healthPath), { recursive: true });
+  fs.writeFileSync(healthPath, JSON.stringify(payload, null, 2), "utf8");
+
+  return {
+    linkedin: result.linkedin,
+    naukri: result.naukri,
+    ok: result.linkedin?.ok && result.naukri?.ok
+  };
+}
+
+async function main() {
   const rootDir = path.resolve(__dirname, "..");
+  const probePortals = process.argv.includes("--portals");
   const checks = {
     node: checkNodeVersion(),
     playwright: checkPlaywright(),
@@ -79,12 +104,24 @@ function main() {
     llm: checkLlm(rootDir)
   };
 
+  if (checks.playwright.ok) {
+    const portals = await checkPortals(rootDir, { probePortals });
+    checks.linkedin = portals.linkedin;
+    checks.naukri = portals.naukri;
+  } else {
+    checks.linkedin = { ok: false, detail: "Install Playwright before portal checks" };
+    checks.naukri = { ok: false, detail: "Install Playwright before portal checks" };
+  }
+
   let exitCode = 0;
   console.log("Meridian doctor\n");
+  if (!probePortals) {
+    console.log("Tip: run `npm run doctor -- --portals` to probe LinkedIn/Naukri selectors over the network.\n");
+  }
 
   for (const [name, result] of Object.entries(checks)) {
-    const label = result.ok ? "OK" : "FAIL";
-    if (!result.ok && name !== "llm") {
+    const label = result.ok ? "OK" : "WARN";
+    if (!result.ok && !["llm", "linkedin", "naukri"].includes(name)) {
       exitCode = 1;
     }
     console.log(`[${label}] ${name}: ${result.detail}`);
@@ -93,4 +130,7 @@ function main() {
   process.exit(exitCode);
 }
 
-main();
+main().catch((error) => {
+  console.error(error.message || error);
+  process.exit(1);
+});

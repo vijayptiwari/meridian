@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" role="img" aria-labelledby="title desc">
   <title>Meridian</title>
-  <desc>Meridian monogram for dark backgrounds</desc>
+  <desc>Meridian monogram for light backgrounds</desc>
   <path
-    fill="#FFFFFF"
+    fill="#0F2744"
     d="M10 38V22.2L17.4 30.1 23.8 14.6 30.2 30.1 37.6 22.2V38H10Z"
   />
-  <circle cx="23.8" cy="10.2" r="3.6" fill="#D4BC82" />
+  <circle cx="23.8" cy="10.2" r="3.6" fill="#C9A962" />
 </svg>

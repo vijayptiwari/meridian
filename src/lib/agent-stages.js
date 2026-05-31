@@ -20,12 +20,10 @@ const AGENT_STAGE_MAP = {
   "transition-learning-agent": "learning",
   "transition-opportunity-agent": "opportunity",
   "transition-compensation-agent": "compensation",
-  "gmail-cleanup-agent": "gmail",
   "demo-agent": "research"
 };
 
 const PIPELINE_DEFINITIONS = {
-  "gmail-cleanup": [["gmail", "Gmail Cleanup"]],
   search: [
     ["research", "Job Research"],
     ["business", "Business Research"],
