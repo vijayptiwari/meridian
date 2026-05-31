@@ -42,7 +42,7 @@
       '<header class="site-header" data-header>' +
       '<div class="site-shell site-header__inner">' +
       '<a class="site-brand site-brand--lockup" href="index.html">' +
-      '<img src="assets/brand/logo-full.svg" width="148" height="36" alt="Meridian" /></a>' +
+      '<img src="assets/brand/logo-full.svg" width="132" height="32" alt="Meridian" /></a>' +
       '<nav class="site-nav" aria-label="Primary">' +
       NAV.map(function (item) {
         return navLink(item, page === "index" ? "home" : page);
@@ -65,7 +65,7 @@
       '<div class="site-shell site-footer__grid">' +
       '<div class="site-footer__brand">' +
       '<a class="site-brand site-brand--lockup" href="index.html">' +
-      '<img src="assets/brand/logo-full.svg" width="132" height="32" alt="Meridian" /></a>' +
+      '<img src="assets/brand/logo-full.svg" width="120" height="28" alt="Meridian" /></a>' +
       '<p class="site-footer__tagline">Career operations platform. Open source, local-first, built for professionals.</p>' +
       "</div>" +
       '<div><h3 class="site-footer__heading">Product</h3><ul class="site-footer__links">' +

@@ -117,12 +117,12 @@ code {
 
 .site-brand--lockup img {
   display: block;
-  height: 32px;
+  height: 28px;
   width: auto;
 }
 
 .site-footer .site-brand--lockup img {
-  height: 28px;
+  height: 24px;
 }
 
 .site-nav {

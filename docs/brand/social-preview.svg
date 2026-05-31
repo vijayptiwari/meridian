@@ -1,24 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" fill="none">
   <rect width="1280" height="640" fill="#FFFFFF" />
-  <rect x="0" y="0" width="1280" height="8" fill="#0A66C2" />
-  <g transform="translate(560 180)">
-    <path
-      d="M7 31.5C11.5 27.5 17.5 26 24 26C30.5 26 36.5 27.5 41 31.5"
-      stroke="#0A66C2"
-      stroke-width="2"
-      stroke-linecap="round"
-      opacity="0.35"
-    />
-    <path d="M24 13.5V38.5" stroke="#242424" stroke-width="2.75" stroke-linecap="round" />
-    <circle cx="24" cy="9" r="4.25" fill="#BFA56A" />
+  <rect width="1280" height="6" fill="#0F2744" />
+  <g transform="translate(604 196)">
+    <path fill="#0F2744" d="M8 38V22.2L15.4 30.1 21.8 14.6 28.2 30.1 35.6 22.2V38H8Z" />
+    <circle cx="21.8" cy="10.2" r="3.6" fill="#C9A962" />
   </g>
   <text
     x="640"
     y="320"
-    fill="#242424"
+    fill="#0F1724"
     font-family="Inter, Segoe UI, system-ui, sans-serif"
-    font-size="72"
-    font-weight="600"
+    font-size="68"
+    font-weight="650"
     text-anchor="middle"
     letter-spacing="-0.03em"
   >
@@ -26,20 +19,20 @@
   </text>
   <text
     x="640"
-    y="380"
-    fill="#616161"
+    y="382"
+    fill="#475569"
     font-family="Inter, Segoe UI, system-ui, sans-serif"
-    font-size="28"
+    font-size="26"
     text-anchor="middle"
   >
     Align your next move.
   </text>
   <text
     x="640"
-    y="430"
-    fill="#757575"
+    y="428"
+    fill="#64748B"
     font-family="Inter, Segoe UI, system-ui, sans-serif"
-    font-size="22"
+    font-size="20"
     text-anchor="middle"
   >
     Open-source local-first career operations platform

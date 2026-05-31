@@ -2,15 +2,22 @@
 
 ## Mark
 
-Three elements on a navigation grid:
+Geometric **M monogram** with a raised center apex and gold alignment point (`#C9A962`).
 
-1. **Horizon arc** — subtle curve suggesting alignment on a sphere
-2. **Meridian line** — vertical stroke through the arc (alignment / true north)
-3. **Apex point** — champagne circle (`#BFA56A`) at the top
+- **Navy** `#0F2744` — primary mark and icon tile
+- **Gold** `#C9A962` — apex point (alignment / meridian reference)
+- **White** — mark on dark surfaces and inside the app icon tile
 
-Use `logo-mark.svg` on light backgrounds, `logo-mark-dark.svg` on dark UI surfaces, `logo-icon.svg` for favicons, and `logo-full.svg` for header lockups.
+Assets:
 
-Minimum size: 24px for the mark, 32px for the icon tile. Clear space = height of the mark on all sides.
+| File | Use |
+|------|-----|
+| `logo-mark.svg` | Mark on light backgrounds |
+| `logo-mark-dark.svg` | Mark on dark UI |
+| `logo-icon.svg` | Favicon and app tile |
+| `logo-full.svg` | Header wordmark lockup |
+
+Minimum size: 24px mark, 16px favicon. Clear space = one apex-point radius around the mark.
 
 ## Colors
 

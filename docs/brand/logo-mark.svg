@@ -1,19 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" role="img" aria-labelledby="title desc">
   <title>Meridian</title>
-  <desc>Meridian alignment mark for light backgrounds</desc>
+  <desc>Meridian monogram for light backgrounds</desc>
   <path
-    d="M7 31.5C11.5 27.5 17.5 26 24 26C30.5 26 36.5 27.5 41 31.5"
-    stroke="#0A66C2"
-    stroke-width="2"
-    stroke-linecap="round"
-    opacity="0.35"
+    fill="#0F2744"
+    d="M10 38V22.2L17.4 30.1 23.8 14.6 30.2 30.1 37.6 22.2V38H10Z"
   />
-  <path
-    d="M24 13.5V38.5"
-    stroke="#242424"
-    stroke-width="2.75"
-    stroke-linecap="round"
-  />
-  <circle cx="24" cy="9" r="4.25" fill="#BFA56A" />
-  <circle cx="24" cy="9" r="4.25" stroke="#9A8448" stroke-width="0.75" opacity="0.45" />
+  <circle cx="23.8" cy="10.2" r="3.6" fill="#C9A962" />
 </svg>

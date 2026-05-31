@@ -1,19 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" role="img" aria-labelledby="title desc">
   <title>Meridian</title>
   <desc>Meridian app icon</desc>
-  <rect width="48" height="48" rx="11" fill="#0A66C2" />
+  <rect width="48" height="48" rx="11" fill="#0F2744" />
   <path
-    d="M10 32.5C13.8 29.2 18.5 27.8 24 27.8C29.5 27.8 34.2 29.2 38 32.5"
-    stroke="#FFFFFF"
-    stroke-width="1.75"
-    stroke-linecap="round"
-    opacity="0.45"
+    fill="#FFFFFF"
+    d="M11 37V23.4L17.2 30.2 23.4 16.8 29.6 30.2 35.8 23.4V37H11Z"
   />
-  <path
-    d="M24 15V37"
-    stroke="#FFFFFF"
-    stroke-width="2.5"
-    stroke-linecap="round"
-  />
-  <circle cx="24" cy="11.5" r="3.75" fill="#E8D5A8" />
+  <circle cx="23.4" cy="12.8" r="3.1" fill="#D4BC82" />
 </svg>
