@@ -115,8 +115,14 @@ code {
   letter-spacing: -0.01em;
 }
 
-.site-brand img {
-  flex-shrink: 0;
+.site-brand--lockup img {
+  display: block;
+  height: 32px;
+  width: auto;
+}
+
+.site-footer .site-brand--lockup img {
+  height: 28px;
 }
 
 .site-nav {

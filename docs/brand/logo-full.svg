@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 168 40" fill="none" role="img" aria-labelledby="title desc">
+  <title>Meridian</title>
+  <desc>Meridian wordmark lockup</desc>
+  <g transform="translate(0 0)">
+    <path
+      d="M7 31.5C11.5 27.5 17.5 26 24 26C30.5 26 36.5 27.5 41 31.5"
+      stroke="#0A66C2"
+      stroke-width="2"
+      stroke-linecap="round"
+      opacity="0.35"
+    />
+    <path
+      d="M24 13.5V38.5"
+      stroke="#242424"
+      stroke-width="2.75"
+      stroke-linecap="round"
+    />
+    <circle cx="24" cy="9" r="4.25" fill="#BFA56A" />
+    <circle cx="24" cy="9" r="4.25" stroke="#9A8448" stroke-width="0.75" opacity="0.45" />
+  </g>
+  <text
+    x="58"
+    y="27"
+    fill="#242424"
+    font-family="Inter, Segoe UI, system-ui, sans-serif"
+    font-size="22"
+    font-weight="600"
+    letter-spacing="-0.02em"
+  >
+    Meridian
+  </text>
+</svg>

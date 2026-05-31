@@ -1,6 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" role="img" aria-labelledby="title desc">
   <title>Meridian</title>
-  <desc>Meridian mark</desc>
-  <circle cx="24" cy="12" r="3" fill="#0A66C2"/>
-  <line x1="24" y1="16" x2="24" y2="40" stroke="#1B1B1B" stroke-width="2" stroke-linecap="round"/>
+  <desc>Meridian alignment mark for light backgrounds</desc>
+  <path
+    d="M7 31.5C11.5 27.5 17.5 26 24 26C30.5 26 36.5 27.5 41 31.5"
+    stroke="#0A66C2"
+    stroke-width="2"
+    stroke-linecap="round"
+    opacity="0.35"
+  />
+  <path
+    d="M24 13.5V38.5"
+    stroke="#242424"
+    stroke-width="2.75"
+    stroke-linecap="round"
+  />
+  <circle cx="24" cy="9" r="4.25" fill="#BFA56A" />
+  <circle cx="24" cy="9" r="4.25" stroke="#9A8448" stroke-width="0.75" opacity="0.45" />
 </svg>
